@@ -18,24 +18,19 @@
 # Multitenancy paper code Greg Jackson and Milan Kabac, 28/08/2017.
 
 import pandas as pd
-import sys
-import os
-import io
 import time
 import math
-from datetime import date, datetime, timedelta
-import csv
 import simplejson
 from NREL import *
 import numpy as np
-import profile
 import random
 import matplotlib.pyplot as plt
 
-# Global store of the performance for later graphing
+""" Global store of the performance for later graphing """
 output_jsons = []  # output file
 
-# For loading in lighting data for energy harvesting calculation
+# --------------------------------------------------------------------------- #
+""" For loading in lighting data for energy harvesting calculation. """
 
 
 def dfLoad(test):
@@ -43,7 +38,10 @@ def dfLoad(test):
                      low_memory=False, index_col=0)  # change file name to loop
     return df
 
-# This sanitizes the input data, there's some strange temperature artifacts this removes
+
+# --------------------------------------------------------------------------- #
+""" This sanitizes the input data, there's some strange temperature artifacts
+this removes """
 
 
 def getTemplist(df):
@@ -56,14 +54,21 @@ def getTemplist(df):
             result.append(float(item))
     return result
 
-# This function calls the orchastrator to find system requirements and adds them to the dataframe. for now it's a placeholder for the length of the file, it'll change to be dynamic
+
+# --------------------------------------------------------------------------- #
+# This function calls the orchastrator to find system requirements and adds
+# them to the dataframe. for now it's a placeholder for the length of the file,
+# it'll change to be dynamic
 
 
 def sysRequirements(df, test, orchest):
-    # This takes the config file dt and multiplies it to be the length of the dataframe in multiples of a day
+    """ This takes the config file dt and multiplies it to be the length of
+    the dataframe in multiples of a day """
     df['Orchastration Requirements'] = orchest * (df.shape[0] / len(orchest))
     return df
 
+
+# --------------------------------------------------------------------------- #
 # This function works out the energy generation of the target test
 
 
@@ -106,6 +111,8 @@ def panelEnergyGen(df, test):
     return df
 # function to take in environmental variables and return current consumption
 
+# --------------------------------------------------------------------------- #
+
 
 def NRELtoWindPower(df):
     energy_type = 3
@@ -135,6 +142,8 @@ def NRELtoWindPower(df):
 
 # sometimes returning negative values, which probably isn't right - need to check DC DC rectifies neg voltages
 
+# --------------------------------------------------------------------------- #
+
 
 def NRELtoTEGPower(df):
     energy_type = 2
@@ -159,7 +168,10 @@ def NRELtoTEGPower(df):
         print "finished with TEG calculations"
     return df
 
-# This function creates a prediction of current energy generated. This is a palceholder
+
+# --------------------------------------------------------------------------- #
+""" This function creates a prediction of current energy generated. This is a
+placeholder """
 
 
 def createPrediction(df):
@@ -172,7 +184,9 @@ def createPrediction(df):
     df['Prediction'] = pred
     return df
 
-# this function calcualtes the performance of a test
+
+# --------------------------------------------------------------------------- #
+# This function calcualtes the performance of a test
 
 
 def calcPerf(df, test, name):
@@ -202,7 +216,11 @@ def calcPerf(df, test, name):
                              'perTimeWasted': waste_metric_per, 'orchas': orchastPlace_list, 'sense_freq': sens_freq_list, 'orchas_diff': orchas})
 
 # Performance here is described as the number of transmissions, time alive, time dead, variance, wasted energy.
-# This function calculates the consumption of a WSN where each sensor always performs at it's maximum duty cycle
+
+
+# --------------------------------------------------------------------------- #
+""" This function calculates the consumption of a WSN where each sensor always
+performs at it's maximum duty cycle. """
 
 
 def staticWSN(df, test):
@@ -264,7 +282,10 @@ def staticWSN(df, test):
     if debug:
         print 'Static Current consumption calculated'
 
-# This function calculates the energy consumption of the WSN if only controlled by the MORE algorithm
+
+# --------------------------------------------------------------------------- #
+""" This function calculates the energy consumption of the WSN if only
+controlled by the MORE algorithm. """
 
 
 def orchasWSN(df, test):
@@ -327,7 +348,10 @@ def orchasWSN(df, test):
     if debug:
         print 'orchastration Current consumption calculated'
 
-# This function calculates energy consumption if the system only relies on the LESS algorithm (without taking into account the MORE aspect)
+
+# --------------------------------------------------------------------------- #
+""" This function calculates energy consumption if the system only relies on the
+LESS algorithm (without taking into account the MORE aspect)"""
 
 
 def enoWSN(df, test):
@@ -471,7 +495,10 @@ def enoWSN(df, test):
     output = sum(sanity) / len(sanity)
     calcPerf(df, test, 'eno')
 
-# This function calculates the energy consumption of the whole performance of the system where LESS is MORE.
+
+# --------------------------------------------------------------------------- #
+""" This function calculates the energy consumption of the whole performance
+of the system where LESS is MORE. """
 
 
 def lessWSN(df, test):
@@ -620,6 +647,7 @@ def lessWSN(df, test):
     calcPerf(df, test, 'LESS')
 
 
+# --------------------------------------------------------------------------- #
 def dumpData(test):
     if output_jsons:
         epoch_time = int(time.time())
@@ -629,6 +657,7 @@ def dumpData(test):
         resultFile.close()
 
 
+# --------------------------------------------------------------------------- #
 def graphData(df):
     tests = ['orchas', 'static', 'LESS', 'eno']
     static_graph, eno_graph, less_graph, orchas_graph, graph = [], [], [], [], []
@@ -667,9 +696,9 @@ def graphData(df):
     # Add labelling automatically
     # Change show graph to save graph
 
+
+# --------------------------------------------------------------------------- #
 # Adding function to take care of summing energy sources
-
-
 def energyGenTotal(df):
     if debug:
         print 'Calculating Total Energy Production'
@@ -692,6 +721,7 @@ def energyGenTotal(df):
     return df
 
 
+# --------------------------------------------------------------------------- #
 def graphEg(df):
     solar_list = df["Energy Solar Gen"].tolist()
     wind_list = df["Energy Wind Gen"].tolist()
@@ -699,7 +729,7 @@ def graphEg(df):
     plt.plot(solar_list, c='blue', linewidth=1.5, label='Solar')
     plt.plot(wind_list, c='green', linewidth=1.5, label='Wind')
     plt.plot(teg_list, c='red', linewidth=1.5, label='TEG')
-    legend = plt.legend(loc='upper right', shadow=True)
+    # legend = plt.legend(loc='upper right', shadow=True)
     plt.xlabel('Time Slot, t', fontsize='x-large')
     plt.ylabel('Energy Generated (mAh)', fontsize='x-large')
     plt.grid(True, which='both')
@@ -709,6 +739,8 @@ def graphEg(df):
     plt.show()
 
 
+# --------------------------------------------------------------------------- #
+# Main
 def main():
     orchest_loop = []
     # orchest_loop.append(orchastLamps)

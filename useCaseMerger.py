@@ -25,10 +25,9 @@ def main():
 				if debug: print "Calculating the centrally controlled WSN performance"
 				enoWSN(df,test)
 				if debug: print "Calculating the solely ENO controlled WSN performance"
-				lessWSN(df,test) 
+				lessWSN(df,test)
 				if debug: print "Calculating the LESS=MORE WSN performance"
 				dumpData(test)
 				if debug: print output_jsons
 				graphData(df)
 				del output_jsons[:]
-	
