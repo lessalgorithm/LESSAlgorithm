@@ -1,2 +1,2 @@
 # Python byte code
-.pyc
+*.pyc
