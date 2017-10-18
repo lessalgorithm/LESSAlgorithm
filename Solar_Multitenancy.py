@@ -783,7 +783,7 @@ def main():
                 # graphEg(df)
 
 
-main()
+# main()
 # profile.run('main()') # Run this if you want timing of each run of the code
 
 # Do I want to use the ICDCS style testing. Robustness to different Nw, different energy sources, different battery sizes etc...
