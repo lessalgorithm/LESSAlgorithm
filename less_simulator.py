@@ -21,7 +21,7 @@ import pandas as pd
 import time
 import math
 import simplejson
-from NREL import *
+from nrel import *
 import numpy as np
 import random
 import matplotlib.pyplot as plt
