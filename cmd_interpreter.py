@@ -38,12 +38,6 @@ class CommandInterpreter(cmd.Cmd):
                        '{0}').format(self.output_loc))
         self.intro += ('\n')
 
-    # def postloop(self):
-    #     print "This is the name of the script: ", sys.argv[0]
-    #     print "Number of arguments: ", len(sys.argv)
-    #     print "The arguments are: ", str(sys.argv)
-    #     print "\n"
-
     def do_run(self, line):
         less_simulator.main()
     #
@@ -71,7 +65,7 @@ class CommandInterpreter(cmd.Cmd):
             if opt == '-r':
                 self.orch_data_loc = arg
             elif opt == '-e':
-                pass
+                self.harveting_data_loc = arg
             elif opt == '-o':
                 self.output_loc = arg
 
@@ -90,4 +84,5 @@ if __name__ == '__main__':
 
     interpreter = CommandInterpreter()
     interpreter.parse_args(sys.argv[1:])
-    CommandInterpreter().cmdloop()
+    interpreter.cmdloop()
+    # CommandInterpreter().cmdloop()
