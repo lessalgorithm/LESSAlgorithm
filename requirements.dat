@@ -1,0 +1,145 @@
+# <time, location, frequency>
+
+# App1 requirements (smart lighting system)
+<9:00pm-4:30am, RIVERSIDE_N2, 2>
+<9:00pm-4:30am, RIVERSIDE_N4, 2>
+<9:00pm-4:30am, RIVERSIDE_N5, 2>
+<9:00pm-4:30am, RIVERSIDE_N7, 2>
+<9:00pm-4:30am, AVENUE_N11, 2>
+<9:00pm-4:30am, AVENUE_N13, 2>
+<9:00pm-4:30am, AVENUE_N16, 2>
+<9:00pm-4:30am, AVENUE_N20, 2>
+
+<4:30am-6:00am, RIVERSIDE_N2, 5>
+<4:30am-6:00am, RIVERSIDE_N4, 5>
+<4:30am-6:00am, RIVERSIDE_N5, 5>
+<4:30am-6:00am, RIVERSIDE_N7, 5>
+<4:30am-6:00am, AVENUE_N11, 5>
+<4:30am-6:00am, AVENUE_N13, 5>
+<4:30am-6:00am, AVENUE_N16, 5>
+<4:30am-6:00am, AVENUE_N20, 5>
+
+<6:00am-9:00am, RIVERSIDE_N2, 30>
+<6:00am-9:00am, RIVERSIDE_N4, 30>
+<6:00am-9:00am, RIVERSIDE_N5, 30>
+<6:00am-9:00am, RIVERSIDE_N7, 30>
+<6:00am-9:00am, AVENUE_N11, 30>
+<6:00am-9:00am, AVENUE_N13, 30>
+<6:00am-9:00am, AVENUE_N16, 30>
+<6:00am-9:00am, AVENUE_N20, 30>
+
+<9:00am-4:00pm, RIVERSIDE_N2, 5>
+<9:00am-4:00pm, RIVERSIDE_N4, 5>
+<9:00am-4:00pm, RIVERSIDE_N5, 5>
+<9:00am-4:00pm, RIVERSIDE_N7, 5>
+<9:00am-4:00pm, AVENUE_N11, 5>
+<9:00am-4:00pm, AVENUE_N13, 5>
+<9:00am-4:00pm, AVENUE_N16, 5>
+<9:00am-4:00pm, AVENUE_N20, 5>
+
+<4:00pm-9:00pm, RIVERSIDE_N2, 30>
+<4:00pm-9:00pm, RIVERSIDE_N4, 30>
+<4:00pm-9:00pm, RIVERSIDE_N5, 30>
+<4:00pm-9:00pm, RIVERSIDE_N7, 30>
+<4:00pm-9:00pm, AVENUE_N11, 30>
+<4:00pm-9:00pm, AVENUE_N13, 30>
+<4:00pm-9:00pm, AVENUE_N16, 30>
+<4:00pm-9:00pm, AVENUE_N20, 30>
+
+# App2 requirements (park environmental status)
+<9:00pm-6:00am, RIVERSIDE_N1, 2>
+<9:00pm-6:00am, RIVERSIDE_N3, 2>
+<9:00pm-6:00am, RIVERSIDE_N6, 2>
+<9:00pm-6:00am, RIVERSIDE_N8, 2>
+<9:00pm-6:00am, AVENUE_N10, 2>
+<9:00pm-6:00am, AVENUE_N15, 2>
+<9:00pm-6:00am, AVENUE_N18, 2>
+<9:00pm-6:00am, AVENUE_N21, 2>
+
+<6:00am-9:00am, RIVERSIDE_N1, 5>
+<6:00am-9:00am, RIVERSIDE_N3, 5>
+<6:00am-9:00am, RIVERSIDE_N6, 5>
+<6:00am-9:00am, RIVERSIDE_N8, 5>
+<6:00am-9:00am, AVENUE_N10, 5>
+<6:00am-9:00am, AVENUE_N15, 5>
+<6:00am-9:00am, AVENUE_N18, 5>
+<6:00am-9:00am, AVENUE_N21, 5>
+
+<9:00am-11:00am, RIVERSIDE_N1, 15>
+<9:00am-11:00am, RIVERSIDE_N3, 15>
+<9:00am-11:00am, RIVERSIDE_N6, 15>
+<9:00am-11:00am, RIVERSIDE_N8, 15>
+<9:00am-11:00am, AVENUE_N10, 15>
+<9:00am-11:00am, AVENUE_N15, 15>
+<9:00am-11:00am, AVENUE_N18, 15>
+<9:00am-11:00am, AVENUE_N21, 15>
+
+<11:00am-1:00pm, RIVERSIDE_N1, 30>
+<11:00am-1:00pm, RIVERSIDE_N3, 30>
+<11:00am-1:00pm, RIVERSIDE_N6, 30>
+<11:00am-1:00pm, RIVERSIDE_N8, 30>
+<11:00am-1:00pm, AVENUE_N10, 30>
+<11:00am-1:00pm, AVENUE_N15, 30>
+<11:00am-1:00pm, AVENUE_N18, 30>
+<11:00am-1:00pm, AVENUE_N21, 30>
+
+<1:00pm-7:00pm, RIVERSIDE_N1, 15>
+<1:00pm-7:00pm, RIVERSIDE_N3, 15>
+<1:00pm-7:00pm, RIVERSIDE_N6, 15>
+<1:00pm-7:00pm, RIVERSIDE_N8, 15>
+<1:00pm-7:00pm, AVENUE_N10, 15>
+<1:00pm-7:00pm, AVENUE_N15, 15>
+<1:00pm-7:00pm, AVENUE_N18, 15>
+<1:00pm-7:00pm, AVENUE_N21, 15>
+
+<7:00pm-9:00pm, RIVERSIDE_N1, 5>
+<7:00pm-9:00pm, RIVERSIDE_N3, 5>
+<7:00pm-9:00pm, RIVERSIDE_N6, 5>
+<7:00pm-9:00pm, RIVERSIDE_N8, 5>
+<7:00pm-9:00pm, AVENUE_N10, 5>
+<7:00pm-9:00pm, AVENUE_N15, 5>
+<7:00pm-9:00pm, AVENUE_N18, 5>
+<7:00pm-9:00pm, AVENUE_N21, 5>
+
+# App3 requirements (wildlife preservation)
+<9:00pm-4:30am, RIVERSIDE_N9, 2>
+<9:00pm-4:30am, AVENUE_N12, 2>
+<9:00pm-4:30am, AVENUE_N14, 2>
+<9:00pm-4:30am, AVENUE_N17, 2>
+<9:00pm-4:30am, AVENUE_N19, 2>
+
+<4:30am-6:00am, RIVERSIDE_N9, 5>
+<4:30am-6:00am, AVENUE_N12, 5>
+<4:30am-6:00am, AVENUE_N14, 5>
+<4:30am-6:00am, AVENUE_N17, 5>
+<4:30am-6:00am, AVENUE_N19, 5>
+
+<6:00am-9:00am, RIVERSIDE_N9, 30>
+<6:00am-9:00am, AVENUE_N12, 30>
+<6:00am-9:00am, AVENUE_N14, 30>
+<6:00am-9:00am, AVENUE_N17, 30>
+<6:00am-9:00am, AVENUE_N19, 30>
+
+<9:00am-11:00am, RIVERSIDE_N9, 15>
+<9:00am-11:00am, AVENUE_N12, 15>
+<9:00am-11:00am, AVENUE_N14, 15>
+<9:00am-11:00am, AVENUE_N17, 15>
+<9:00am-11:00am, AVENUE_N19, 15>
+
+<11:00am-1:00pm, RIVERSIDE_N9, 30>
+<11:00am-1:00pm, AVENUE_N12, 30>
+<11:00am-1:00pm, AVENUE_N14, 30>
+<11:00am-1:00pm, AVENUE_N17, 30>
+<11:00am-1:00pm, AVENUE_N19, 30>
+
+<1:00pm-4:00pm, RIVERSIDE_N9, 15>
+<1:00pm-4:00pm, AVENUE_N12, 15>
+<1:00pm-4:00pm, AVENUE_N14, 15>
+<1:00pm-4:00pm, AVENUE_N17, 15>
+<1:00pm-4:00pm, AVENUE_N19, 15>
+
+<4:00pm-9:00pm, RIVERSIDE_N9, 30>
+<4:00pm-9:00pm, AVENUE_N12, 30>
+<4:00pm-9:00pm, AVENUE_N14, 30>
+<4:00pm-9:00pm, AVENUE_N17, 30>
+<4:00pm-9:00pm, AVENUE_N19, 30>
