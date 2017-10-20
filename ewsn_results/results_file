@@ -1,0 +1,17 @@
+
+##############
+APP 3 WIND RESULTS 
+##############
+
+The average Dt static 1.07,orch 7.58,ENO 9.99, LESS 9.54, target 14.98 
+The variability static 30.99,orch 119.09, ENO 37.79,LESS 78.24, target 158.4
+time dead static 96.43%,orch 30.95%, ENO 0.0%,LESS 0.0%
+the % of target met static 1.0%,orch 51.0%,ENO 42.0%, LESS 59.0%
+
+##############
+APP 3 Thermal RESULTS 
+##############
+The average Dt static 0.71,orch 0.49,ENO 2.65, LESS 4.98, target 14.98 
+The variability static 20.92,orch 10.96, ENO 7.01,LESS 64.4, target 158.4
+time dead static 97.62%,orch 94.64%, ENO 0.0%,LESS 0.0%
+the % of target met static 0.0%,orch 3.0%,ENO 16.0%, LESS 33.0%
