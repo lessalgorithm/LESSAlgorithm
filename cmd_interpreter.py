@@ -12,7 +12,7 @@ class CommandInterpreter(cmd.Cmd):
     prompt = '>>> '
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    orch_data_loc = dir_path + '/requirements.dat'
+    orch_data_loc = dir_path + '/requirements.txt'
     harveting_data_loc = dir_path + '/datasets/env_data'
     output_loc = dir_path + '/datasets/results'
     intro_art = """
