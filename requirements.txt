@@ -1,3 +1,7 @@
+# This dataset defines application requirements for use cases presented in the
+# EWSN submission. The park is divided in two main areas, i.e., riverside and
+# avenue. The WSN layout is provided in the park_wsn_layout.png file.
+
 # <time, location, frequency>
 
 # App1 requirements (smart lighting system)

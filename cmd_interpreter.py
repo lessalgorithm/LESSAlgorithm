@@ -3,14 +3,14 @@ import os
 import sys
 import getopt
 import less_simulator
+from orchestrator import Orchestrator
 
 
 class CommandInterpreter(cmd.Cmd):
     # Command line processor for setting up and running the simulator.
-
     # Cmd class variables from cmd package
-    prompt = '>>> '
 
+    prompt = '>>> '
     dir_path = os.path.dirname(os.path.realpath(__file__))
     orch_data_loc = dir_path + '/requirements.txt'
     harveting_data_loc = dir_path + '/datasets/env_data'
@@ -28,6 +28,10 @@ class CommandInterpreter(cmd.Cmd):
                                 https://github.com/lessalgorithm/LESSAlgorithm
                              """
 
+    def __init__(self):
+        cmd.Cmd.__init__(self)
+        self.orchestrator = Orchestrator()
+
     def preloop(self):
         self.intro = self.intro_art
         self.intro += (('\nOrchestrator requirements file: '
@@ -39,7 +43,8 @@ class CommandInterpreter(cmd.Cmd):
         self.intro += ('\n')
 
     def do_run(self, line):
-        less_simulator.main()
+        self.orchestrator.read_reqs(self.orch_data_loc)
+        # less_simulator.main()
     #
     # def do_print(self, line):
     #
@@ -76,13 +81,17 @@ class CommandInterpreter(cmd.Cmd):
         pass
 
 
+def main():
+    interpreter = CommandInterpreter()
+    interpreter.parse_args(sys.argv[1:])
+    interpreter.cmdloop()
+    # CommandInterpreter().cmdloop()
+
+
 if __name__ == '__main__':
     # print "This is the name of the script: ", sys.argv[0]
     # print "Number of arguments: ", len(sys.argv)
     # print "The arguments are: ", str(sys.argv)
     # print "\n"
 
-    interpreter = CommandInterpreter()
-    interpreter.parse_args(sys.argv[1:])
-    interpreter.cmdloop()
-    # CommandInterpreter().cmdloop()
+    main()
