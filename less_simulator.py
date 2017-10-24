@@ -741,11 +741,12 @@ def graphEg(df):
 
 # --------------------------------------------------------------------------- #
 # Main
-def main():
+def main(orch_profile):
     orchest_loop = []
     # orchest_loop.append(orchastLamps)
     # orchest_loop.append(orchastMicro)
-    orchest_loop.append(orchastMulti)
+    # orchest_loop.append(orchastMulti)
+    orchest_loop.append(orch_profile)
     for orchest in orchest_loop:
         for test in test_loop:
             # loads environmental variables from location and time defined in NREL.py. If not local it downloads them from the NREL database and parses them for use.
@@ -777,7 +778,7 @@ def main():
                 dumpData(test)
                 if debug:
                     print output_jsons
-                # graphData(df)
+                graphData(df)
                 # tableData(df)
                 del output_jsons[:]
                 # graphEg(df)

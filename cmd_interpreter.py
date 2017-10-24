@@ -10,6 +10,8 @@ class CommandInterpreter(cmd.Cmd):
     # Command line processor for setting up and running the simulator.
     # Cmd class variables from cmd package
 
+    app_req_list = []
+
     prompt = '>>> '
     dir_path = os.path.dirname(os.path.realpath(__file__))
     orch_data_loc = dir_path + '/requirements.txt'
@@ -43,13 +45,27 @@ class CommandInterpreter(cmd.Cmd):
         self.intro += ('\n')
 
     def do_run(self, line):
-        self.orchestrator.read_reqs(self.orch_data_loc)
-        # less_simulator.main()
-    #
-    # def do_print(self, line):
-    #
-    #
-    # def do_profile(self, line):
+        sen_req_dict = self.orchestrator.read_sensor_reqs(self.orch_data_loc)
+        app_req_dict = self.orchestrator.read_app_reqs(self.orch_data_loc)
+
+        print ('\n=========================== '
+               'Operational profile for applications'
+               ' ===========================\n')
+        for app_reqs in app_req_dict.items():
+            print app_reqs[0], '\t:', self.orchestrator.parse_reqs(app_reqs)
+
+        print ('\n=========================== '
+               'Operational profile for individual'
+               'sensors ===========================\n')
+        for loc_reqs in sen_req_dict.items():
+            # print '----------', loc_reqs[0], '-----------'
+            print loc_reqs[0], '\t:', self.orchestrator.parse_reqs(loc_reqs)
+
+        print less_simulator.main(
+            self.orchestrator.parse_reqs(app_req_dict.items()[2]))
+
+        # for app_reqs in app_req_dict.items():
+        #     less_simulator.main(self.orchestrator.parse_reqs(app_reqs))
 
     def do_quit(self, line):
         """quit

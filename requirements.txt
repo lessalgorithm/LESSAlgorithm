@@ -2,8 +2,13 @@
 # EWSN submission. The park is divided in two main areas, i.e., riverside and
 # avenue. The WSN layout is provided in the park_wsn_layout.png file.
 
-# <time, location, frequency>
+@App1=[9:00pm-4:30am->2, 4:30am-6:00am->5, 6:00am-9:00am->30, 9:00am-4:00pm->5, 4:00pm-9:00pm->30]
 
+@App2=[9:00pm-6:00am->2, 6:00am-9:00am->5, 9:00am-11:00am->15, 11:00am-1:00pm->30, 1:00pm-7:00pm->15, 7:00pm-9:00pm->5]
+
+@App3=[9:00pm-4:30am->2, 4:30am-6:00am->5, 6:00am-9:00am->30, 9:00am-11:00am->15, 11:00am-1:00pm->30, 1:00pm-4:00pm->15, 4:00pm-9:00pm->30]
+
+# <time, location, frequency>
 # App1 requirements (smart lighting system)
 <9:00pm-4:30am, RIVERSIDE_N2, 2>
 <9:00pm-4:30am, RIVERSIDE_N4, 2>
@@ -57,7 +62,7 @@
 <9:00pm-6:00am, RIVERSIDE_N8, 2>
 <9:00pm-6:00am, AVENUE_N10, 2>
 <9:00pm-6:00am, AVENUE_N15, 2>
-<9:00pm-6:00am, AVENUE_N18, 2>
+<9:00am-6:00am, AVENUE_N18, 2>
 <9:00pm-6:00am, AVENUE_N21, 2>
 
 <6:00am-9:00am, RIVERSIDE_N1, 5>
