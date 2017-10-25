@@ -82,6 +82,7 @@ The orchestration profile for each application and sensor node is produced using
 ```bash
 >>> list
 ```
+
 <p align="center">
     <img src="site/list.png"/>
     <h5 id="title" align="center">List the orchestration profile of applications and sensors.</h5>
@@ -89,12 +90,12 @@ The orchestration profile for each application and sensor node is produced using
 
 #### Generate energy harvesting prediction ####
 
-To generate the prediction for energy harvesting by sensors using solar, wind and thermal use the ```engen``` command.
+To generate the prediction for energy harvesting by sensors using solar, wind and thermal use the ```engen``` command. Environmental data used for generating energy harvesting prediction can be found in ```datasets/env_data/0ATotal_solarcalc_raw.csv```.
 
 ```bash
 >>> engen
-
 ```
+
 <p align="center">
     <img src="site/engen.png"/>
     <h5 id="title" align="center">Engen command output.</h5>
@@ -105,3 +106,31 @@ To generate the prediction for energy harvesting by sensors using solar, wind an
     <h5 id="title" align="center">Graph presenting the energy generated using various energy harversting methods: 
         solar(blue), wind(green), thermal(red).</h5>
 </br>
+
+#### Simulating algorithms ####
+
+To run a simulation using provided application requirements and the defined energy harvesting model use the ```run``` command.
+The command takes two arguments: 1. application identifier (e.g., App1), 2. energy harvesting sources (s -> solar, w -> wind, t -> thermal). Solar is the default harvesting source.
+
+```bash
+>>> run App1 s
+```
+
+<p align="center">
+    <img src="site/run.png"/>
+    <h5 id="title" align="center">Run command output.</h5>
+</br>
+
+<p align="center">
+    <img src="site/run_graph.png"/>
+    <h5 id="title" align="center">Graph presenting the operation of different algorithms for App1 over time. </h5>
+</br>
+
+Simulation results are stored in the JSON format and can be found in the ```datasets/results``` folder. 
+
+<p align="center">
+    <img src="site/results.png"/>
+    <h5 id="title" align="center">Results presented in the JSON format.</h5>
+</br>
+
+The results presented in the EWSN paper submission can be found in the ```ewsn_results``` folder. 
