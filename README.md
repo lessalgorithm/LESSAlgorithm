@@ -18,7 +18,13 @@ A prototype version of LESS is currently available along with a simulator, which
     <h5 id="title" align="center">The orchestration framework scheme.</h5>
 </br>
 
-## Installation
+## Requirements
+* Python 2.7.x
+* numpy (1.13.1)
+* pandas (0.20.3)
+* simplejson (3.11.1)
+
+## Simulation 
 
 <p align="center">
     <img src="park_wsn_layout.png"/>
