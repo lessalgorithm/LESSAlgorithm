@@ -62,7 +62,7 @@ class Orchestrator():
 
         for req in loc_reqs[1]:
             values = req.split('->')
-            time_window = values[0].split('-')            
+            time_window = values[0].split('-')
             duty_cycle = int(values[1])
 
             self.generate_operational_profile(
