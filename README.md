@@ -32,6 +32,9 @@ sudo pip install simplejson
 ```
 
 ## Simulation 
+```bash
+python cmd_interpreter.py
+```
 
 <p align="center">
     <img src="park_wsn_layout.png"/>
