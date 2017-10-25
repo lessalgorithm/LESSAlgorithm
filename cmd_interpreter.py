@@ -101,7 +101,7 @@ class CommandInterpreter(cmd.Cmd):
             df = less_simulator.panelEnergyGen(df, test)
             df = less_simulator.NRELtoWindPower(df)
             df = less_simulator.NRELtoTEGPower(df)
-            df = less_simulator.energyGenTotal(df)
+            df = less_simulator.energyGenTotal(df, 'swt')
 
             print ('\n================================================'
                    '=================================================')
