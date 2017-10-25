@@ -702,7 +702,7 @@ def graphData(df):
 
 # --------------------------------------------------------------------------- #
 # Adding function to take care of summing energy sources
-def energyGenTotal(df):
+def energyGenTotal(df, energy_source):
     if debug:
         print ' => Calculating Total Energy Production'
     solar_list = df["Energy Solar Gen"].tolist()
@@ -711,11 +711,11 @@ def energyGenTotal(df):
     currentgen_list = []
     for a, b, c in zip(solar_list, wind_list, teg_list):
         x = 0
-        if "s" in energy_combination:
+        if "s" in energy_source:
             x += (a * (random.uniform(solar_prod_var[0], solar_prod_var[1])))
-        if "w" in energy_combination:
+        if "w" in energy_source:
             x += (b * (random.uniform(wind_prod_var[0], wind_prod_var[1])))
-        if "t" in energy_combination:
+        if "t" in energy_source:
             x += (c * (random.uniform(teg_prod_var[0], teg_prod_var[1])))
         currentgen_list.append(x)
     df['Energy Generation Total'] = currentgen_list
@@ -744,7 +744,7 @@ def graphEg(df):
 
 # --------------------------------------------------------------------------- #
 # Main
-def main(orch_profile):
+def main(orch_profile, energy_source):
     orchest_loop = []
     # orchest_loop.append(orchastLamps)
     # orchest_loop.append(orchastMicro)
@@ -765,7 +765,9 @@ def main(orch_profile):
                 # calculates thermal energy generation from environmental variables
                 df = NRELtoTEGPower(df)
                 # calculates energy total by summing the above
-                df = energyGenTotal(df)
+                if not energy_source:
+                    energy_source = energy_combination
+                df = energyGenTotal(df, energy_source)
                 staticWSN(df, test)
                 if debug:
                     print " => Calculating the static WSN performance"

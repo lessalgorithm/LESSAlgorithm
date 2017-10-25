@@ -46,14 +46,31 @@ class CommandInterpreter(cmd.Cmd):
         self.intro += ('\n')
 
     def do_run(self, line):
+        sim_args = [None, 's']
+        args = line.split(' ')
+
+        for i in range(0, len(args)):
+            sim_args[i] = args[i]
+
         app_req_dict = self.orchestrator.read_app_reqs(self.orch_data_loc)
 
-        print ('\n=============================== '
-               'Running simulation for {0}'
-               ' ==================================\n').format(line)
+        if len(args) > 0:
+            if args[0] in app_req_dict:
+                print ('\n=============================== '
+                       'Running simulation for {0}'
+                       ' ==================================\n').format(args[0])
+                print ('Running with [{0}] energy sources.\n'
+                       '').format(sim_args[1])
 
-        less_simulator.main(self.orchestrator.parse_reqs((line,
-                            app_req_dict.get(line))))
+                less_simulator.main(self.orchestrator.parse_reqs(
+                                        (sim_args[0],
+                                         app_req_dict.get(sim_args[0]))),
+                                    sim_args[1])
+            else:
+                print (' => Invalid application name!')
+                print (' => run <app_name> <energy_source>')
+                print (' => energy_source: s (solar), w (wind), t (termal)')
+
 
     def do_list(self, line):
         sen_req_dict = self.orchestrator.read_sensor_reqs(self.orch_data_loc)
