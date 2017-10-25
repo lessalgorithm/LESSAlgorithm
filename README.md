@@ -78,6 +78,25 @@ The orchestration profile for each application and sensor node is produced using
     <h5 id="title" align="center">List the orchestration profile of applications and sensors.</h5>
 </br>
 
+#### Generate energy harvesting prediction ####
+
+To generate the prediction for energy harvesting by sensors using solar, wind and thermal use the ```engen``` command.
+
+```bash
+>>> engen
+
+```
+<p align="center">
+    <img src="site/engen.png"/>
+    <h5 id="title" align="center">Engen command output.</h5>
+</br>
+
+<p align="center">
+    <img src="site/engen_graph.png"/>
+    <h5 id="title" align="center">Graph presenting the energy generated using various energy harversting methods: 
+        solar(blue), wind(green), thermal(red).</h5>
+</br>
+
 <p align="center">
     <img src="site/park_wsn_layout.png"/>
     <h5 id="title" align="center">WSN layout of the urban park deployment.
