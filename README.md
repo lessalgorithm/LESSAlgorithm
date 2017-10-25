@@ -14,7 +14,7 @@ A prototype version of LESS is currently available along with a simulator, which
 
 <br />
 <p align="center">
-    <img src="framework.svg"/>
+    <img src="site/framework.svg"/>
     <h5 id="title" align="center">The orchestration framework scheme.</h5>
 </br>
 
@@ -35,9 +35,13 @@ sudo pip install simplejson
 ```bash
 python cmd_interpreter.py
 ```
+<p align="center">
+    <img src="site/intro.png"/>
+    <h5 id="title" align="center">The orchestration framework scheme.</h5>
+</br>
 
 <p align="center">
-    <img src="park_wsn_layout.png"/>
+    <img src="site/park_wsn_layout.png"/>
     <h5 id="title" align="center">WSN layout of the urban park deployment.
         The blue area indicates the RIVERSIDE location. The purple area indicates the AVENUE location.
         Pins indicate sensor assignment to applications: blue(App1), orange(App2), green(App3)</h5>
