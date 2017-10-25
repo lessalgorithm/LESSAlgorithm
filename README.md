@@ -24,6 +24,13 @@ A prototype version of LESS is currently available along with a simulator, which
 * pandas (0.20.3)
 * simplejson (3.11.1)
 
+```bash
+sudo apt-get install python-pip
+sudo pip install numpy
+sudo pip install pandas
+sudo pip install simplejson
+```
+
 ## Simulation 
 
 <p align="center">
