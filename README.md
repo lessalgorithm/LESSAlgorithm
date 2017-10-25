@@ -8,7 +8,33 @@ A prototype version of LESS is currently available along with a simulator, which
 
 ## Basic Features
 
-## Installation
+* **Orchestrator** component, which allows users to specify requirements pertaining to the application whilst being agnostic to the operation of the ENO algorithm itself. These requirements are normalized by the orchestrator and disseminated into the network.
+
+* **Low Energy Sensor Scheduling (LESS)** algorithm that has been developed to promote synergy between the requirements of applications and the energy constraints of ENO WSNs whilst maintaining fairness when provisioning tasks.
+
+<br />
+<p align="center">
+    <img src="framework.svg"/>
+    <h5 id="title" align="center">The orchestration framework scheme.</h5>
+</br>
+
+## Requirements
+* Python 2.7.x
+* numpy (1.13.1)
+* pandas (0.20.3)
+* simplejson (3.11.1)
+
+```bash
+sudo apt-get install python-pip
+sudo pip install numpy
+sudo pip install pandas
+sudo pip install simplejson
+```
+
+## Simulation 
+```bash
+python cmd_interpreter.py
+```
 
 <p align="center">
     <img src="park_wsn_layout.png"/>
