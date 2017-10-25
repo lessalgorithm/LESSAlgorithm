@@ -8,6 +8,16 @@ A prototype version of LESS is currently available along with a simulator, which
 
 ## Basic Features
 
+* **Orchestrator** component, which allows users to specify requirements pertaining to the application whilst being agnostic to the operation of the ENO algorithm itself. These requirements are normalized by the orchestrator and disseminated into the network.
+
+* **Low Energy Sensor Scheduling (LESS)** algorithm that has been developed to promote synergy between the requirements of applications and the energy constraints of ENO WSNs whilst maintaining fairness when provisioning tasks.
+
+<br />
+<p align="center">
+    <img src="framework.svg"/>
+    <h5 id="title" align="center">The orchestration framework scheme.</h5>
+</br>
+
 ## Installation
 
 <p align="center">
