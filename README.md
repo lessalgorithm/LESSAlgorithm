@@ -32,12 +32,50 @@ sudo pip install simplejson
 ```
 
 ## Simulation 
+
+#### Start the simulator ####
 ```bash
 python cmd_interpreter.py
 ```
 <p align="center">
     <img src="site/intro.png"/>
-    <h5 id="title" align="center">The orchestration framework scheme.</h5>
+    <h5 id="title" align="center">Start the simulator.</h5>
+</br>
+
+#### Read application requirements ####
+
+Application requirements are stored in the ```requirements.txt``` file.
+
+```
+# This dataset defines application requirements for use cases presented in the
+# EWSN submission. The park is divided in two main areas, i.e., riverside and
+# avenue. The WSN layout is provided in the park_wsn_layout.png file.
+
+@App1=[9:00pm-4:30am->2, 4:30am-6:00am->5, 6:00am-9:00am->30, 9:00am-4:00pm->5, 4:00pm-9:00pm->30]
+@App2=[9:00pm-6:00am->2, 6:00am-9:00am->5, 9:00am-11:00am->15, 11:00am-1:00pm->30, 1:00pm-7:00pm->15, 7:00pm-9:00pm->5]
+@App3=[9:00pm-4:30am->2, 4:30am-6:00am->5, 6:00am-9:00am->30, 9:00am-11:00am->15, 11:00am-1:00pm->30, 1:00pm-4:00pm->15, 4:00pm-9:00pm->30]
+
+# <time, location, frequency>
+# App1 requirements (smart lighting system)
+<9:00pm-4:30am, RIVERSIDE_N2, 2>
+<9:00pm-4:30am, RIVERSIDE_N4, 2>
+<9:00pm-4:30am, RIVERSIDE_N5, 2>
+<9:00pm-4:30am, RIVERSIDE_N7, 2>
+<9:00pm-4:30am, AVENUE_N11, 2>
+<9:00pm-4:30am, AVENUE_N13, 2>
+<9:00pm-4:30am, AVENUE_N16, 2>
+<9:00pm-4:30am, AVENUE_N20, 2>
+...
+```
+
+The orchestration profile for each application and sensor node is produced using the list command.
+
+```bash
+>>> list
+```
+<p align="center">
+    <img src="site/list.png"/>
+    <h5 id="title" align="center">List the orchestration profile of applications and sensors.</h5>
 </br>
 
 <p align="center">
