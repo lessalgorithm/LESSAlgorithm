@@ -68,6 +68,15 @@ Application requirements are stored in the ```requirements.txt``` file.
 ...
 ```
 
+These requirements are defined for application scenarios described in the paper submission. The layout of the WSN in the urban park is as depicted below.
+
+<p align="center">
+    <img src="site/park_wsn_layout.png"/>
+    <h5 id="title" align="center">WSN layout of the urban park deployment.
+        The blue area indicates the RIVERSIDE location. The purple area indicates the AVENUE location.
+        Pins indicate sensor assignment to applications: blue(App1), orange(App2), green(App3)</h5>
+</br>
+
 The orchestration profile for each application and sensor node is produced using the list command.
 
 ```bash
@@ -95,11 +104,4 @@ To generate the prediction for energy harvesting by sensors using solar, wind an
     <img src="site/engen_graph.png"/>
     <h5 id="title" align="center">Graph presenting the energy generated using various energy harversting methods: 
         solar(blue), wind(green), thermal(red).</h5>
-</br>
-
-<p align="center">
-    <img src="site/park_wsn_layout.png"/>
-    <h5 id="title" align="center">WSN layout of the urban park deployment.
-        The blue area indicates the RIVERSIDE location. The purple area indicates the AVENUE location.
-        Pins indicate sensor assignment to applications: blue(App1), orange(App2), green(App3)</h5>
 </br>
