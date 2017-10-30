@@ -9,14 +9,6 @@
 # The propose of this code it to run experiments around adaptive multitenancy
 # driven ENO WSN for an E-WSN submission.
 
-# Original Code Greg Jackson 19/05/2016 AESE Labs Imperial College. gr3gario
-# on twitter and gregario on github.
-
-# Tracking Paper Code Greg Jackson 6/03/2017 AESE Labs Imperial College.
-# gr3gario on twitter and gregario on github.
-
-# Multitenancy paper code Greg Jackson and Milan Kabac, 28/08/2017.
-
 import pandas as pd
 import time
 import math
