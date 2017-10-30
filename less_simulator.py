@@ -3,11 +3,8 @@
 # This is the combination of several scripts that download data from the
 # NASA NSRDB database and process.
 
-# This code is adapted from original code written for the longevity ICDCS
-# paper and subsequent GLOBECOM paper based on solar tracking.
-
 # The propose of this code it to run experiments around adaptive multitenancy
-# driven ENO WSN for an E-WSN submission.
+# driven ENO WSN for an EWSN submission.
 
 import pandas as pd
 import time
