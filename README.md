@@ -134,3 +134,11 @@ Simulation results are stored in the JSON format and can be found in the ```data
 </br>
 
 The results presented in the EWSN paper submission can be found in the ```ewsn_results``` folder. 
+
+## Algorithm design ##
+
+#### findDuty #### This function runs at the start of a time window and calculates a predicted duty cycle for each time slot based on the the predicted energy generation and the system model described here
+#### performDuty #### undertakes the prescribed tasks by the ENO function
+#### checkHg #### runs at the end of a given timeslot, as real energy generation metrics can now be derived from current sensors. The algorithm goes on to use this residual energy metric to reassign energy dynamically for future timeslots in the same time window.
+#### surplusTask #### If orchestrator needs have been met for the time window and the energy storage element is full, use remaining energy to perform system and maintenance tasks.
+#### ewmaUpdate #### Uses recorded data from current sensor to update energy generation array for future time window as per prescribed EWMA function.
