@@ -137,7 +137,12 @@ The results presented in the EWSN paper submission can be found in the ```ewsn_r
 
 ## Algorithm design
 
-#### findDuty #### 
+The operations provided by the LESS algorithm are described below
+
+#### Determining the duty cycle (findDuty) #### 
+The ```findDuty``` operation calculates a prediction for the duty cycle of a sensor for each time slot.
+The code for findDuty can be found in less_simulator.py file, where the initial seeding is provided in lines 500 - 509.
+
 This function runs at the start of a time window and calculates a predicted duty cycle for each time slot based on the the predicted energy generation and the system model described here
 
 #### performDuty #### 
