@@ -142,16 +142,16 @@ The operations provided by the LESS algorithm are described below
 #### Determining the duty cycle (findDuty) #### 
 The ```findDuty``` operation calculates a the duty cycle of a sensor for each time slot at the beginning of each time window. The code for findDuty can be found in less_simulator.py file where the initial seeding is provided in lines 500 - 509.
 
-From the initial seeding the the duty cycle required for each timeslot is calculated from the predicted energy for the new time window Nw. Then, during the operation of ```performDuty```, Using the energy generation predicted the number of sensing, computation and transmission tasks possible is calculated for the upcoming timeslot. After these tasks have been completed the real energy generated is then calculated in ```checkHg```. The difference between the predicted energy generation and real energy generation then determines if there is residual energy in the system and the upcoming scheduled tasks in future timeslots in the current time window are dynamically updated to account for differences between prediction and reality to ensure sustainability. 
+From the initial seeding the duty cycle required for each timeslot is calculated from the predicted energy for the new time window Nw. Then, during the operation of ```performDuty```, Using the energy generation predicted the number of sensing, computation and transmission tasks possible is calculated for the upcoming timeslot. After these tasks have been completed the real energy generated is then calculated in ```checkHg```. The difference between the predicted energy generation and real energy generation then determines if there is residual energy in the system and the upcoming scheduled tasks in future timeslots in the current time window are dynamically updated to account for differences between prediction and reality to ensure sustainability. 
 
 
 #### performDuty #### 
-The ```performDuty``` function, in the lessWSN function at 529 to 564 in less_simulator.py works out energy from performing the tasks scheduled in the current timslot as per the energy model described in the associated E-WSN paper. This information informs the dynamic scheduling element of the algorithm described in ```findDuty```. 
+The ```performDuty``` function, in the lessWSN function at 529 to 564 in less_simulator.py works out energy from performing the tasks scheduled in the current timeslot as per the energy model described in the associated EWSN paper. This information is provided to the dynamic scheduling element of the algorithm described in ```findDuty```. 
 
 #### checkHg #### 
-in the lessWSN function, at lines 579-615 of less_simulator.py, the ```checkHg``` function is performed. 
+In the lessWSN function, at lines 579-615 of less_simulator.py, the ```checkHg``` function is performed. 
 
-As this is a simulator careful consideration has been undertaken to represent the real world dynamics and prediction of solar. The EWMA prediction method for solar is used over a time window, Nw, but at the end of a time slot the real energy generated is known in a WSN. This knowledge is simply gained by measuring energy generated (once or at set intervals throughout the timeslot via a high side current sensor, depending on timeslot length). 
+As this is a simulator, careful consideration has been undertaken to represent the real world dynamics and prediction of solar. The EWMA prediction method for solar is used over a time window, Nw, but at the end of a time slot the real energy generated is known in a WSN. This knowledge is simply gained by measuring energy generated (once or at set intervals throughout the timeslot via a high side current sensor, depending on timeslot length). 
 
 For the simulation, ```checkHg``` here uses the real data for said timeslot (known from NREL database) and compares this to the predicted data from the EWMA method.  The algorithm goes on to use this to understand if the system over or under provisioned the network tasks in a timeslot when compared to the predicted amount. This is how the residual energy metric is calculated to reassign energy dynamically for future timeslots in the same time window .
 
@@ -160,7 +160,7 @@ The actual energy generated is calculated in the functions ```panelEnergyGen```,
 #### surplusTask #### 
 The ```surplusTask``` function in the lessWSN function of less_simulator.py at lines 542-548 flags state where surplus energy is generated. 
 
-If orchestrator needs have been met for the time window and the energy storage element is full, the remaining energy can be used to perform system and maintenance tasks. For the purpose of this paper we keep the notion of surplus tasks abstract, however this will inform future work. However, it is important to note that the dynamic d_t^max of this paper will promote greater a energy surplus in comparion to the kansal method which in turn will allow for a greater number of surplus tasks to be performed, highlighting a benefit of our work. 
+If orchestrator needs have been met for the time window and the energy storage element is full, the remaining energy can be used to perform system and maintenance tasks. For the purpose of this paper we keep the notion of surplus tasks abstract, however this will inform future work. However, it is important to note that the dynamic d_t^max of this paper will promote a greater energy surplus in comparion to the ENO-Kansal method which in turn will allow for a greater number of surplus tasks to be performed, highlighting a benefit of our work. 
 
 #### ewmaUpdate #### 
 In the ```ewmaUpdate``` function in the lessWSN function of the less_simulator.py script at the end of each time slot in the master loop the EWMA is updated for that timeslot, weighted against historical values, calculated in lines 529-564 and updated at line 566. 
