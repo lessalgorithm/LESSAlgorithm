@@ -139,7 +139,7 @@ The results presented in the EWSN paper submission can be found in the ```ewsn_r
 
 The operations provided by the LESS algorithm are described below
 
-#### Determining the duty cycle (findDuty) #### 
+#### findDuty #### 
 The ```findDuty``` operation calculates a the duty cycle of a sensor for each time slot at the beginning of each time window. The code for findDuty can be found in less_simulator.py file where the initial seeding is provided in lines 500 - 509.
 
 From the initial seeding the duty cycle required for each timeslot is calculated from the predicted energy for the new time window Nw. Then, during the operation of ```performDuty```, Using the energy generation predicted the number of sensing, computation and transmission tasks possible is calculated for the upcoming timeslot. After these tasks have been completed the real energy generated is then calculated in ```checkHg```. The difference between the predicted energy generation and real energy generation then determines if there is residual energy in the system and the upcoming scheduled tasks in future timeslots in the current time window are dynamically updated to account for differences between prediction and reality to ensure sustainability. 
