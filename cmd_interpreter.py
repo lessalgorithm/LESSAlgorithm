@@ -2,7 +2,7 @@ import cmd
 import os
 import sys
 import getopt
-import less_simulator
+import less_simulator_plus
 from orchestrator import Orchestrator
 from nrel import *
 
@@ -56,13 +56,10 @@ class CommandInterpreter(cmd.Cmd):
 
         if len(args) > 0:
             if args[0] in app_req_dict:
-                print ('\n=============================== '
-                       'Running simulation for {0}'
-                       ' ==================================\n').format(args[0])
-                print ('Running with [{0}] energy sources.\n'
-                       '').format(sim_args[1])
+                print (("\n=============================== Running simulation for {0} ==================================\n").format(args[0]))
+                print (("Running with [{0}] energy sources.\n").format(sim_args[1]))
 
-                less_simulator.main(self.orchestrator.parse_reqs(
+                less_simulator_plus.main(self.orchestrator.parse_reqs(
                                         (sim_args[0],
                                          app_req_dict.get(sim_args[0]))),
                                     sim_args[1])
@@ -80,33 +77,33 @@ class CommandInterpreter(cmd.Cmd):
                'Operational profile for applications'
                ' ==============================\n')
         for app_reqs in app_req_dict.items():
-            print app_reqs[0], '\t:', self.orchestrator.parse_reqs(app_reqs)
+            print(app_reqs[0], '\t:', self.orchestrator.parse_reqs(app_reqs))
 
         print ('\n=========================== '
                'Operational profile for individual'
                'sensors ===========================\n')
         for loc_reqs in sen_req_dict.items():
             # print '----------', loc_reqs[0], '-----------'
-            print loc_reqs[0], '\t:', self.orchestrator.parse_reqs(loc_reqs)
+            print(loc_reqs[0], '\t:', self.orchestrator.parse_reqs(loc_reqs))
 
-        print '\n'
+        print('\n')
 
     def do_engen(self, line):
         print ('\n================================== '
                'Calculating energy levels'
                ' ====================================')
         for test in test_loop:
-            df = less_simulator.dfLoad(test)
-            print ''
-            df = less_simulator.panelEnergyGen(df, test)
-            df = less_simulator.NRELtoWindPower(df)
-            df = less_simulator.NRELtoTEGPower(df)
-            df = less_simulator.energyGenTotal(df, 'swt')
+            df = less_simulator_plus.dfLoad(test)
+            # (print '')
+            df = less_simulator_plus.panelEnergyGen(df, test)
+            df = less_simulator_plus.NRELtoWindPower(df)
+            df = less_simulator_plus.NRELtoTEGPower(df)
+            df = less_simulator_plus.energyGenTotal(df, 'swt')
 
             print ('\n================================================'
                    '=================================================')
 
-            less_simulator.graphEg(df)
+            less_simulator_orch.graphEg(df)
 
     def do_quit(self, line):
         """quit
