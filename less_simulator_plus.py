@@ -227,18 +227,38 @@ def weather_volatility_value():
     return 0
 
 # wv0(d); 
-def fluctuation_frequency(interval_count, slot_count):
+def fluctuation_frequency(df, interval_count, slot_count, threshold, weighting_factor):
 
     print("HERE!!")
-    # print(df['Energy Solar Gen']);
+    wv_0 = 0
+    wv_1 = 0
+
+    # print(df['Energy Solar Gen'])
 
     # loop over the duration of (M intervals * L slots)
-    # for i in range [2, interval_count*slot_count] :
+    for i in range (2, interval_count*slot_count) :
+        h_i = (1 if df['Energy Solar Gen'][i] > df['Energy Solar Gen'][i-1] else 0)
+        h_i_1 = (1 if df['Energy Solar Gen'][i-1] > df['Energy Solar Gen'][i-2] else 0)
+        g_i = (1 if (df['Energy Solar Gen'][i] - df['Energy Solar Gen'][i-1] >= threshold) else 0)
+
+        # bitwise xor
+        wv_0 += (bool(h_i) ^ bool(h_i_1))
+        wv_1 += (bool(h_i) ^ bool(h_i_1)) and g_i
+
+        # print(df['Energy Solar Gen'][i])
+    print("wv_0=", wv_0)
+    print("wv_1=", wv_1)
+
+    wv = weighting_factor*wv_1 + (1 - weighting_factor) * (wv_0 - wv_1)
+
+    print("wv=", wv)
 
     return 0
 
 # wv1(d); 
 def fluctuation_intensity():
+
+
     return 0
 
 # wvT is a predefined cloudiness degree threshold
@@ -843,7 +863,9 @@ def main(orch_profile, energy_source):
                 dumpData(test)
                 # if debug:
                     # print output_jsons
-                graphData(df)
+
+                fluctuation_frequency(df, 1, 48, 5, 0.8)
+                # graphData(df)
                 # tableData(df)
                 del output_jsons[:]
                 # graphEg(df)
