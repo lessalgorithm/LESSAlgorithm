@@ -103,7 +103,7 @@ class CommandInterpreter(cmd.Cmd):
             print ('\n================================================'
                    '=================================================')
 
-            less_simulator_orch.graphEg(df)
+            less_simulator_plus.graphEg(df)
 
     def do_quit(self, line):
         """quit

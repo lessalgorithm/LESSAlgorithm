@@ -223,37 +223,32 @@ def weightin_factor():
 
 # wv(d);  the more sunny the dth day is, the smaller wv(d) is
 # wv(d) = αwv · wv1(d) + (1 − αwv) · (wv0(d) − wv1(d))
-def weather_volatility_value():
-    return 0
+# def weather_volatility_value():
+#     return 0
 
-# wv0(d); 
-def fluctuation_frequency(df, interval_count, slot_count, threshold, weighting_factor):
-
-    print("HERE!!")
+    
+# Return weather volatility value (wv(d))
+#   wv_0(d) => fluctuation frequency; total number of peaks and troughs
+#   wv_1(d) => fluctuation intensity
+#   h_i => indicates increase in real harvested solar energy
+def weather_volatility_value(df, start_slot, end_slot, threshold, weighting_factor):
     wv_0 = 0
     wv_1 = 0
 
     # print(df['Energy Solar Gen'])
 
     # loop over the duration of (M intervals * L slots)
-    for i in range (2, interval_count*slot_count) :
+    for i in range (start_slot + 2, end_slot) :
         h_i = (1 if df['Energy Solar Gen'][i] > df['Energy Solar Gen'][i-1] else 0)
         h_i_1 = (1 if df['Energy Solar Gen'][i-1] > df['Energy Solar Gen'][i-2] else 0)
         g_i = (1 if (df['Energy Solar Gen'][i] - df['Energy Solar Gen'][i-1] >= threshold) else 0)
-
-        # bitwise xor
-        wv_0 += (bool(h_i) ^ bool(h_i_1))
-        wv_1 += (bool(h_i) ^ bool(h_i_1)) and g_i
-
-        # print(df['Energy Solar Gen'][i])
-    print("wv_0=", wv_0)
-    print("wv_1=", wv_1)
+        
+        wv_0 += (bool(h_i) ^ bool(h_i_1)) # bitwise xor
+        wv_1 += (bool(h_i) ^ bool(h_i_1)) and g_i # bitwise xor    
 
     wv = weighting_factor*wv_1 + (1 - weighting_factor) * (wv_0 - wv_1)
 
-    print("wv=", wv)
-
-    return 0
+    return wv
 
 # wv1(d); 
 def fluctuation_intensity():
@@ -823,6 +818,42 @@ def graphEg(df):
 
 
 # --------------------------------------------------------------------------- #
+def plotSolarEgen(df, wvList):
+    solar_list = df["Energy Solar Gen"].tolist()
+    
+    plt.figure(1)
+    plt.subplot(211)
+    plt.plot(solar_list, c='blue', linewidth=1.5, label='Solar')
+    plt.xlabel('Time Slot, t', fontsize='x-large')
+    plt.ylabel('Energy Generated (mAh)', fontsize='x-large')
+    plt.grid(True, which='both')
+    plt.minorticks_on
+    plt.ylim(ymax=70, ymin=0)
+    plt.xlim(xmax=350, xmin=0)
+
+    plt.subplot(212)
+    x = np.arange(7)    
+
+    plt.bar(x, wvList, width=0.4)
+    plt.xlabel('Day, t', fontsize='x-large')
+    plt.ylabel('Weather volatility', fontsize='x-large')        
+    plt.gca().yaxis.grid(True)    
+    plt.minorticks_on
+    plt.ylim(ymax=8, ymin=0)
+    plt.xlim(xmax=6.5, xmin=-0.5)
+    plt.show()
+
+
+# --------------------------------------------------------------------------- #
+def plotWeatherVolatility(wvList):
+    x = np.arange(7)
+    fig, ax = plt.subplots()
+    plt.bar(x, wvList)
+    plt.ylim(ymax=8, ymin=0)
+    plt.xlim(xmax=7, xmin=-1)
+    plt.show()
+
+# --------------------------------------------------------------------------- #
 # Main
 def main(orch_profile, energy_source):
     orchest_loop = []
@@ -864,7 +895,16 @@ def main(orch_profile, energy_source):
                 # if debug:
                     # print output_jsons
 
-                fluctuation_frequency(df, 1, 48, 5, 0.8)
+                wvList = []
+                for i in range(1, 8):
+                    start_slot = (i - 1) * 48
+                    end_slot = (i * 48) - 1                    
+                    wvList.append(weather_volatility_value(df, start_slot, end_slot, 5, 0.8))
+                    print("wv(", i,") = ", wvList[i-1])
+                
+                plotSolarEgen(df, wvList)
+                # plotWeatherVolatility(wvList)
+
                 # graphData(df)
                 # tableData(df)
                 del output_jsons[:]
