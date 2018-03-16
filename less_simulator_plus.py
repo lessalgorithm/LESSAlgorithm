@@ -19,6 +19,9 @@ import os
 
 """ Global store of the performance for later graphing """
 output_jsons = []  # output file
+refSolarPowerVector = [[]]
+wcewma_pred_vector = []
+slotPerDayCount = 48
 
 # --------------------------------------------------------------------------- #
 """ For loading in lighting data for energy harvesting calculation. """
@@ -32,7 +35,6 @@ def dfLoad(test):
 # --------------------------------------------------------------------------- #
 """ This sanitizes the input data, there's some strange temperature artifacts
 this removes """
-
 
 def getTemplist(df):
     temperature_list, result = df["Temperature"].tolist(), []
@@ -208,14 +210,30 @@ placeholder """
 # degree threshold. Consequently, P (i,l,d) is only updated when the dth day is not quite cloudy, 
 # which aims to filter the influence of bad weather days (noise) on the seasonal stable reference power.
 
+def get_wcewma_for_day(df, ref_solar_power_vector):
+    real_solar_data = df['Energy Solar Gen'].tolist()
+    ref_solar_power_list = []
+    vector = []
 
-def wc_ewma_for_all_slots():
-    return 0
+    for i in range(len(ref_solar_power_vector)):
+        for j in range(len(ref_solar_power_vector[i])):
+            ref_solar_power_list.append(ref_solar_power_vector[i][j])
+    
+    # print("len(real_solar_data)", len(real_solar_data))
+    # print("len(ref_solar_power_list)", len(ref_solar_power_list))
 
-# Pre (i, l, d); i -> slot. l -> interval, d -> day
-# Reflects the seasonal stable solar profile governed by the long-term geographical climate
-def ref_slot_solar_power():
-    return 0
+    for i in range(len(ref_solar_power_list)):
+        # if(i == 0):
+        #     pred_slot = ref_solar_power_list[i]
+        # else:
+        if((i > 0) and (ref_solar_power_list[i - 1] > 0)):
+            pred_slot = (real_solar_data[i - 1] / ref_solar_power_list[i - 1]) * ref_solar_power_list[i]
+        else:
+            pred_slot = ref_solar_power_list[i]
+
+        vector.append(pred_slot)
+
+    return vector
 
 # αre ∈ [0, 1]
 def weightin_factor():
@@ -250,10 +268,35 @@ def weather_volatility_value(df, start_slot, end_slot, threshold, weighting_fact
 
     return wv
 
+
+# Pre (i, l, d); i -> slot. l -> interval, d -> day
+# Reflects the seasonal stable solar profile governed by the long-term geographical climate
+def getNextDayRefSolarPowerVector(df, cloudiness_degree_threshold, currentDayIndex, weighting_factor):
+    vector = []
+
+    startSlotInDF = (currentDayIndex - 1) * slotPerDayCount
+    endSlotInDF = currentDayIndex * slotPerDayCount
+
+    print("reference solar power vector for day: ", currentDayIndex, "\n")
+
+    if currentDayIndex == 1:
+        return df['Energy Solar Gen'][startSlotInDF:endSlotInDF].tolist()
+
+    wv = weather_volatility_value(df, startSlotInDF, endSlotInDF, 5, 0.8)    
+
+    previousDayVector = getNextDayRefSolarPowerVector(df, cloudiness_degree_threshold, currentDayIndex - 1, weighting_factor)    
+    if  wv >= cloudiness_degree_threshold:        
+        vector = previousDayVector
+    else:
+        print("start: ", startSlotInDF, "end: ", endSlotInDF-1)
+        for i in range(startSlotInDF, endSlotInDF):        
+            vectorIndex = i - (48 * (currentDayIndex - 1)) # the vector start at 0 and ends at 47 
+            vector.append(weighting_factor * df['Energy Solar Gen'][i] + (1 - weighting_factor) * previousDayVector[vectorIndex])           
+
+    return vector
+
 # wv1(d); 
 def fluctuation_intensity():
-
-
     return 0
 
 # wvT is a predefined cloudiness degree threshold
@@ -818,12 +861,21 @@ def graphEg(df):
 
 
 # --------------------------------------------------------------------------- #
-def plotSolarEgen(df, wvList):
+def plotSolarEgen(df, wvList, vectorsa):
+    print(wcewma_pred_vector)
     solar_list = df["Energy Solar Gen"].tolist()
+    pre_list = []
+
+    for i in range(len(refSolarPowerVector)):
+        for j in range(len(refSolarPowerVector[i])):            
+            pre_list.append(refSolarPowerVector[i][j])
     
     plt.figure(1)
     plt.subplot(211)
-    plt.plot(solar_list, c='blue', linewidth=1.5, label='Solar')
+    # print("VECTOR: ", len(wcewma_pred_vector))
+    plt.plot(pre_list, c='yellow', linewidth=1.5, label='Pre')
+    plt.plot(solar_list, c='blue', linewidth=1.5, label='Real Solar Data')
+    plt.plot(vectorsa, c='red', linewidth=1.5, label='WC-EWMA')
     plt.xlabel('Time Slot, t', fontsize='x-large')
     plt.ylabel('Energy Generated (mAh)', fontsize='x-large')
     plt.grid(True, which='both')
@@ -897,18 +949,26 @@ def main(orch_profile, energy_source):
 
                 wvList = []
                 for i in range(1, 8):
-                    start_slot = (i - 1) * 48
-                    end_slot = (i * 48) - 1                    
+                    start_slot = (i - 1) * slotPerDayCount
+                    end_slot = (i * slotPerDayCount) - 1                     
                     wvList.append(weather_volatility_value(df, start_slot, end_slot, 5, 0.8))
                     print("wv(", i,") = ", wvList[i-1])
                 
-                plotSolarEgen(df, wvList)
+                # df, cloudiness_degree_threshold, currentDayIndex, currentDayRefSolarPower, weighting_factor
+                
+                for i in range(1,8):
+                    refSolarPowerVector.insert(i,(getNextDayRefSolarPowerVector(df, 3, i, 0.5)))
+                
+                wcewma_pred_vector = get_wcewma_for_day(df, refSolarPowerVector)
+                print("len(wcewma_pred_vector)", len(wcewma_pred_vector))
+                print(wcewma_pred_vector)
+                plotSolarEgen(df, wvList, wcewma_pred_vector)
                 # plotWeatherVolatility(wvList)
 
                 # graphData(df)
                 # tableData(df)
                 del output_jsons[:]
-                # graphEg(df)
+                # graphEg(df)                
 
 
 orchestrator = Orchestrator()
