@@ -14,14 +14,21 @@ from nrel import *
 import numpy as np
 import random
 import matplotlib.pyplot as plt
-from orchestrator import Orchestrator
 import os
+import sys
+sys.path.append('energy_prediction')
+sys.path.append('eno')
+from orchestrator import Orchestrator
+from wcewma import WCEWMA
+from eno_static import StaticENO
+from eno_orchestrator import OrchestratorENO
+from eno_less import LESSENO
+from eno_kansal import KansalENO
 
 """ Global store of the performance for later graphing """
 output_jsons = []  # output file
 refSolarPowerVector = [[]]
 wcewma_pred_vector = []
-slotPerDayCount = 48
 
 # --------------------------------------------------------------------------- #
 """ For loading in lighting data for energy harvesting calculation. """
@@ -182,127 +189,6 @@ def createPrediction(df):
     df['Prediction'] = pred
     return df
 
-
-# --------------------------------------------------------------------------- #
-""" This function creates a prediction of current energy generated. This is a
-placeholder """
-
-# Distributed Networking in Autonomic
-# Solar Powered Wireless Sensor Networks
-
-# A day is divided into M non- overlapping prediction intervals, each of which consists of 
-# L slot(s) with a duration T (i.e. M · L · T = 24 hours).
-# 
-# We can use the triple (i, l, d) to refer to a slot i in the prediction interval l of 
-# the dth day.
-
-# Let Pre(i, l, d) be the reference solar power in slot (i, l, d) to reflect the seasonal 
-# stable solar pofile governed by the long-term geographical climate. The reference power 
-# vector is only updated once at the end of a day as follows:
-
-# Pre(i, l, d + 1) =  
-#                     Pre(i, l, d),           wv(d) ≥ wvT 
-#                     αrePreal (i,l,d)+(1−αre)Pre(i,l,d) otherwise
-
-# where preal (i, l, d) is the real solar power metered in slot solar (i, l, d); αre ∈ [0, 1] 
-# is the weighting factor; wv(d) is weather condition level of the dth day (explained in next 
-# subsection), i.e. the more sunny the dth day is, the smaller wv(d) is; wvT is a predefined cloudiness 
-# degree threshold. Consequently, P (i,l,d) is only updated when the dth day is not quite cloudy, 
-# which aims to filter the influence of bad weather days (noise) on the seasonal stable reference power.
-
-def get_wcewma_for_day(df, ref_solar_power_vector):
-    real_solar_data = df['Energy Solar Gen'].tolist()
-    ref_solar_power_list = []
-    vector = []
-
-    for i in range(len(ref_solar_power_vector)):
-        for j in range(len(ref_solar_power_vector[i])):
-            ref_solar_power_list.append(ref_solar_power_vector[i][j])
-    
-    # print("len(real_solar_data)", len(real_solar_data))
-    # print("len(ref_solar_power_list)", len(ref_solar_power_list))
-
-    for i in range(len(ref_solar_power_list)):
-        # if(i == 0):
-        #     pred_slot = ref_solar_power_list[i]
-        # else:
-        if((i > 0) and (ref_solar_power_list[i - 1] > 0)):
-            pred_slot = (real_solar_data[i - 1] / ref_solar_power_list[i - 1]) * ref_solar_power_list[i]
-        else:
-            pred_slot = ref_solar_power_list[i]
-
-        vector.append(pred_slot)
-
-    return vector
-
-# αre ∈ [0, 1]
-def weightin_factor():
-    return 0
-
-# wv(d);  the more sunny the dth day is, the smaller wv(d) is
-# wv(d) = αwv · wv1(d) + (1 − αwv) · (wv0(d) − wv1(d))
-# def weather_volatility_value():
-#     return 0
-
-    
-# Return weather volatility value (wv(d))
-#   wv_0(d) => fluctuation frequency; total number of peaks and troughs
-#   wv_1(d) => fluctuation intensity
-#   h_i => indicates increase in real harvested solar energy
-def weather_volatility_value(df, start_slot, end_slot, threshold, weighting_factor):
-    wv_0 = 0
-    wv_1 = 0
-
-    # print(df['Energy Solar Gen'])
-
-    # loop over the duration of (M intervals * L slots)
-    for i in range (start_slot + 2, end_slot) :
-        h_i = (1 if df['Energy Solar Gen'][i] > df['Energy Solar Gen'][i-1] else 0)
-        h_i_1 = (1 if df['Energy Solar Gen'][i-1] > df['Energy Solar Gen'][i-2] else 0)
-        g_i = (1 if (df['Energy Solar Gen'][i] - df['Energy Solar Gen'][i-1] >= threshold) else 0)
-        
-        wv_0 += (bool(h_i) ^ bool(h_i_1)) # bitwise xor
-        wv_1 += (bool(h_i) ^ bool(h_i_1)) and g_i # bitwise xor    
-
-    wv = weighting_factor*wv_1 + (1 - weighting_factor) * (wv_0 - wv_1)
-
-    return wv
-
-
-# Pre (i, l, d); i -> slot. l -> interval, d -> day
-# Reflects the seasonal stable solar profile governed by the long-term geographical climate
-def getNextDayRefSolarPowerVector(df, cloudiness_degree_threshold, currentDayIndex, weighting_factor):
-    vector = []
-
-    startSlotInDF = (currentDayIndex - 1) * slotPerDayCount
-    endSlotInDF = currentDayIndex * slotPerDayCount
-
-    print("reference solar power vector for day: ", currentDayIndex, "\n")
-
-    if currentDayIndex == 1:
-        return df['Energy Solar Gen'][startSlotInDF:endSlotInDF].tolist()
-
-    wv = weather_volatility_value(df, startSlotInDF, endSlotInDF, 5, 0.8)    
-
-    previousDayVector = getNextDayRefSolarPowerVector(df, cloudiness_degree_threshold, currentDayIndex - 1, weighting_factor)    
-    if  wv >= cloudiness_degree_threshold:        
-        vector = previousDayVector
-    else:
-        print("start: ", startSlotInDF, "end: ", endSlotInDF-1)
-        for i in range(startSlotInDF, endSlotInDF):        
-            vectorIndex = i - (48 * (currentDayIndex - 1)) # the vector start at 0 and ends at 47 
-            vector.append(weighting_factor * df['Energy Solar Gen'][i] + (1 - weighting_factor) * previousDayVector[vectorIndex])           
-
-    return vector
-
-# wv1(d); 
-def fluctuation_intensity():
-    return 0
-
-# wvT is a predefined cloudiness degree threshold
-def cloudiness_degree_thres():
-    return 0
-
 # --------------------------------------------------------------------------- #
 # This function calcualtes the performance of a test
 
@@ -335,436 +221,6 @@ def calcPerf(df, test, name):
 
 # Performance here is described as the number of transmissions, time alive, time dead, variance, wasted energy.
 
-
-# --------------------------------------------------------------------------- #
-""" This function calculates the consumption of a WSN where each sensor always
-performs at it's maximum duty cycle. """
-
-
-def staticWSN(df, test):
-    if debug:
-        print(" => Working out static current consumption bits")
-    # Load arbitrary list to iterate about. This will change to input variables when ENO in introduced
-    DHI_list = df["DHI"].tolist()
-    Icons_list = [((((Iq + ((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * sens_freq)) * (random.uniform(energy_cons_var[0],
-                                                                                                                                 energy_cons_var[1]))) for a in DHI_list]  # Think about if I'm dividing by 2 before taking from battery is Iq being misquoted
-    currentgen_list = df['Energy Generation Total'].tolist()
-    #  This is a simple flag to show when battery is full (2),  battery is empty/system dead (0) or nominally operating (1)
-    batterylevelflag_list = [2]
-    # This records surplus energy generation that otherwise wouldn't be used when there is no ENO utility stuff
-    energygensurplus_list = [0]
-    # This list records times of where energy consumption is greater than generation. This is then used to derive battery health
-    energydeficit_list = [0]
-    sens_freq_list = [sens_freq]
-    # This list contains the battery level of the system over the source of the system . Assumes state zero is full battery
-    batterylevel_list = [initial_battery_capacity_mah]
-    # current battery level. Makes assumption that system starts full
-    prev = initial_battery_capacity_mah
-    for a, b in zip(Icons_list[1:], currentgen_list[1:]):
-        x = prev + ((b - a) / 2)
-        if x > initial_battery_capacity_mah:  # if there is a surplus energy and battery is full
-            # this is the energy wasted in mAh
-            energygensurplus_list.append(x - initial_battery_capacity_mah)
-            # this appends zero to the deficit list as we have not wasted energy
-            energydeficit_list.append(0)
-            # appends a 2 to the level flag list
-            batterylevelflag_list.append(2)
-            # records the battery level for final calculations
-            batterylevel_list.append(initial_battery_capacity_mah)
-            prev = initial_battery_capacity_mah
-            sens_freq_list.append(sens_freq)  # Think about where to put this
-        elif x < 0:  # This takes care of when battery is empty. Doesn't report negative storage
-            batterylevel_list.append(0)
-            batterylevelflag_list.append(0)
-            energygensurplus_list.append(0)
-            energydeficit_list.append(x - prev)
-            prev = 0
-            sens_freq_list.append(0)
-
-        else:  # Normal operating for system, to calc new battery level
-            batterylevel_list.append(x)
-            batterylevelflag_list.append(1)
-            energygensurplus_list.append(0)
-            energydeficit_list.append(0)
-            prev = x
-            sens_freq_list.append(sens_freq)
-
-    # pass these metrics to a list so that the calcPerf can use them later
-    df['Energy Consumption'] = Icons_list
-    df['Battery Level'] = batterylevel_list
-    df['Battery Level Flag'] = batterylevelflag_list
-    df['Energy Surplus List'] = energygensurplus_list
-    df['Energy Deficit List'] = energydeficit_list
-    df['Sense Frequency'] = sens_freq_list
-    calcPerf(df, test, 'static')
-    if debug:
-        print(" => Static Current consumption calculated")
-
-
-# --------------------------------------------------------------------------- #
-""" This function calculates the energy consumption of the WSN if only
-controlled by the MORE algorithm. """
-
-
-def orchasWSN(df, test):
-    if debug:
-        print(" => Working out MORE current consumption bits")
-    orchastPlace_list = df['Orchastration Requirements'].tolist()
-    Icons_list = [((((Iq + ((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * a)) * (random.uniform(energy_cons_var[0], energy_cons_var[1])))
-                  for a in orchastPlace_list]  # Think about if I'm dividing by 2 before taking from battery is Iq being misquoted
-    # batteryLevel(df,test,Icons_list,'orchas')
-    currentgen_list = df['Energy Generation Total'].tolist()
-    #  This is a simple flag to show when battery is full (2),  battery is empty/system dead (0) or nominally operating (1)
-    batterylevelflag_list = [2]
-    # This records surplus energy generation that otherwise wouldn't be used when there is no ENO utility stuff
-    energygensurplus_list = [0]
-    # This list records times of where energy consumption is greater than generation. This is then used to derive battery health
-    energydeficit_list = [0]
-    sens_freq_list = []
-    sens_freq_list.append(orchastPlace_list[0])
-    # This list contains the battery level of the system over the source of the system . Assumes state zero is full battery
-    batterylevel_list = [initial_battery_capacity_mah]
-    # current battery level. Makes assumption that system starts full
-    prev = initial_battery_capacity_mah
-    for a, b, c in zip(Icons_list[1:], currentgen_list[1:], orchastPlace_list[1:]):
-        x = prev + ((b - a) / 2)
-        if x > initial_battery_capacity_mah:  # if there is a surplus energy and battery is full
-            # this is the energy wasted in mAh
-            energygensurplus_list.append(x - initial_battery_capacity_mah)
-            # this appends zero to the deficit list as we have not wasted energy
-            energydeficit_list.append(0)
-            # appends a 2 to the level flag list
-            batterylevelflag_list.append(2)
-            # records the battery level for final calculations
-            batterylevel_list.append(initial_battery_capacity_mah)
-            prev = initial_battery_capacity_mah
-            sens_freq_list.append(c)  # Think about where to put this
-        elif x < 0:  # This takes care of when battery is empty. Doesn't report negative storage
-            batterylevel_list.append(0)
-            batterylevelflag_list.append(0)
-            energygensurplus_list.append(0)
-            energydeficit_list.append(x - prev)
-            prev = 0
-            sens_freq_list.append(0)
-
-        else:  # Normal operating for system, to calc new battery level
-            batterylevel_list.append(x)
-            batterylevelflag_list.append(1)
-            energygensurplus_list.append(0)
-            energydeficit_list.append(0)
-            prev = x
-            sens_freq_list.append(c)
-
-    # pass these metrics to a list so that the calcPerf can use them later
-    df['Energy Consumption'] = Icons_list
-    df['Battery Level'] = batterylevel_list
-    df['Battery Level Flag'] = batterylevelflag_list
-    df['Energy Surplus List'] = energygensurplus_list
-    df['Energy Deficit List'] = energydeficit_list
-    df['Sense Frequency'] = sens_freq_list
-    calcPerf(df, test, 'orchas')
-    if debug:
-        print(" => Orchestration Current consumption calculated")
-
-
-# --------------------------------------------------------------------------- #
-""" This function calculates energy consumption if the system only relies on the
-LESS algorithm (without taking into account the MORE aspect)"""
-
-
-def enoWSN(df, test):
-    if debug:
-        print(" => Working out ENO current consumption bits")
-
-    Eg_Nwi2 = [0.1] * Nw
-    Eg_Nwi = [0.1] * Nw
-    duty_Nw = []
-    # This defines the duty cycle starting point for any window size Nw (following Kansal method)
-    for key in range(0, Nw):
-        if key <= round((0.333 * Nw), 0):
-            duty_Nw.append(min_tx_freq)
-        elif key > round((0.333 * Nw), 0) and key <= round((0.666 * Nw)):
-            duty_Nw.append(max_tx_freq)
-        elif key > round((0.666 * Nw)):
-            duty_Nw.append(min_tx_freq)
-        else:
-            pass
-
-    # Change this to EG_total
-    currentgen_list = df['Energy Generation Total'].tolist()
-    # This list contains the battery level of the system over the source of the system . Assumes state zero is full battery
-    batterylevel_list = [initial_battery_capacity_mah]
-    #  This is a simple flag to show when battery is full (2),  battery is empty/system dead (0) or nominally operating (1)
-    batterylevelflag_list = [2]
-    # This records surplus energy generation that otherwise wouldn't be used when there is no ENO utility stuff
-    energygensurplus_list = [0]
-    # This list records times of where energy consumption is greater than generation. This is then used to derive battery health
-    energydeficit_list = [0]
-    Icons_list = [0]
-    sens_freq_list = []
-    sens_freq_list.append(duty_Nw[0])
-    # current battery level. Makes assumption that system starts full
-    prev = initial_battery_capacity_mah
-    sanity = []
-    loop = 0
-
-    # Variables for EWMA filter
-    for a in currentgen_list[1:]:
-        sens_freq = duty_Nw[loop]
-
-        Icons = ((Iq + ((((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * sens_freq)) * (random.uniform(
-            energy_cons_var[0], energy_cons_var[1])))  # Think about if I'm dividing by 2 before taking from battery is Iq being misquoted
-        Icons_list.append(Icons)
-        x = prev + (((a) - Icons) / 2)
-        if x > prev:  # This if takes care of the times when battery is full so we don't report greater than 100% storage
-            batterylevel_list.append(prev)
-            batterylevelflag_list.append(2)
-            y = x - prev
-            energygensurplus_list.append(y)
-            energydeficit_list.append(0)
-            sens_freq_list.append(sens_freq)
-
-        elif x < 0:  # This takes care of when battery is empty. Doesn't report negative storage
-            batterylevel_list.append(0)
-            batterylevelflag_list.append(0)
-            energygensurplus_list.append(0)
-            temp = x - prev
-            energydeficit_list.append(temp)
-            prev = 0
-            sens_freq_list.append(0)
-
-        else:  # Normal operating for system, to calc new battery level
-            batterylevel_list.append(x)
-            batterylevelflag_list.append(1)
-            energygensurplus_list.append(0)
-            prev = x
-            sens_freq_list.append(sens_freq)
-
-        Eg_Nwi[loop] = round(Eg_Nwi[loop], 2)
-        Eg_Nwi[loop] = a
-
-        # Sensing frequency considerations
-        cost_per_tx = ((((((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * 1))
-                       * (random.uniform(energy_cons_var[0], energy_cons_var[1])))
-        residual_energy = (Eg_Nwi[loop] - Iq) - (duty_Nw[loop] * cost_per_tx)
-
-        # There is more energy generated than used in the timeslot
-        if loop == Nw:
-            pass
-        else:
-            if residual_energy >= cost_per_tx:
-                duty_temp = duty_Nw
-                index_min = np.argmin(duty_temp)
-                no_trans = round(residual_energy / cost_per_tx)
-                change_duty = duty_Nw[index_min] + no_trans
-                if change_duty > max_tx_freq:
-                    duty_change = max_tx_freq - duty_Nw[index_min]
-                    duty_Nw[index_min] = max_tx_freq
-                    duty_temp = duty_Nw
-                    change_duty = no_trans - duty_change
-                    index_min = np.argmin(duty_temp)
-                    if change_duty > max_tx_freq:
-                        duty_Nw[index_min] = max_tx_freq
-                    else:
-                        duty_Nw[index_min] = change_duty
-                else:
-                    duty_Nw[index_min] = change_duty
-
-            # There is a deficit in energy greater than the energy needed to send a transmission
-            if residual_energy < 0 and abs(residual_energy) > cost_per_tx:
-                duty_temp = duty_Nw
-                index_max = np.argmax(duty_temp)
-                no_trans = abs(round(residual_energy / cost_per_tx))
-                change_duty = duty_Nw[index_max] - no_trans
-                if change_duty < min_tx_freq:
-                    duty_change = abs(min_tx_freq - duty_Nw[index_max])
-                    duty_Nw[index_max] = min_tx_freq
-                    duty_temp = duty_Nw
-                    index_max = np.argmax(duty_temp)
-                    change_duty = no_trans - duty_change
-                    if change_duty < min_tx_freq:
-                        duty_Nw[index_max] = min_tx_freq
-                    else:
-                        duty_Nw[index_max] = change_duty
-
-                else:
-                    duty_Nw[index_max] = change_duty
-            else:
-                pass
-
-        loop += 1
-        if loop > Nw - 1:
-            # This checks the number of transmissions over or under utilised + is surplus energy, negative is energy defecit
-            sanity_check = round(
-                ((sum(Eg_Nwi)) - (sum(duty_Nw) * cost_per_tx)), 1)
-            sanity.append(sanity_check)
-            loop = 0
-
-    df['Battery Level'] = batterylevel_list
-    df['Battery Level Flag'] = batterylevelflag_list
-    #df['Energy Surplus List'] = energygensurplus_list
-    #df['Energy Deficit List'] = energydeficit_list
-    df['Energy Consumption'] = Icons_list
-    df['Sense Frequency'] = sens_freq_list
-    # Find a way to record the window characteristics
-
-    if debug:
-        print(" => Battery level calculated for battery aware model and added to dataframe")
-    output = sum(sanity) / len(sanity)
-    calcPerf(df, test, 'eno')
-
-
-# --------------------------------------------------------------------------- #
-""" This function calculates the energy consumption of the whole performance
-of the system where LESS is MORE. """
-
-
-def lessWSN(df, test):
-    if debug:
-        print(" => Working out LESS current consumption bits")
-    orchastPlace_list = df['Orchastration Requirements'].tolist()
-    Eg_Nwi2 = [0.1] * Nw
-    Eg_Nwi = [0.1] * Nw
-    duty_Nw = []
-    # This defines the duty cycle starting point for any window size Nw (following Kansal method)
-    for key in range(0, Nw):
-        if key <= round((0.333 * Nw), 0):
-            duty_Nw.append(min_tx_freq)
-        elif key > round((0.333 * Nw), 0) and key <= round((0.666 * Nw)):
-            duty_Nw.append(max_tx_freq)
-        elif key > round((0.666 * Nw)):
-            duty_Nw.append(min_tx_freq)
-        else:
-            pass
-
-    # Change this to EG_total
-    currentgen_list = df['Energy Generation Total'].tolist()
-    # This list contains the battery level of the system over the source of the system . Assumes state zero is full battery
-    batterylevel_list = [initial_battery_capacity_mah]
-    #  This is a simple flag to show when battery is full (2),  battery is empty/system dead (0) or nominally operating (1)
-    batterylevelflag_list = [2]
-    # This records surplus energy generation that otherwise wouldn't be used when there is no ENO utility stuff
-    energygensurplus_list = [0]
-    # This list records times of where energy consumption is greater than generation. This is then used to derive battery health
-    energydeficit_list = [0]
-    Icons_list = [0]
-    sens_freq_list = []
-    sens_freq_list.append(duty_Nw[0])
-    # current battery level. Makes assumption that system starts full
-    prev = initial_battery_capacity_mah
-    sanity = []
-    loop = 0
-
-    for a in currentgen_list[1:]:
-        sens_freq_eno = duty_Nw[loop]
-        sens_freq_needed = orchastPlace_list[loop]
-        # Think about this, this needs to choose the orchastrator amount unless that will kill the sustainability of the system
-        sens_freq = min(sens_freq_eno, sens_freq_needed)
-        # sens_freq = duty_Nw[loop] #added this in instead the line above with hopes it would have been simpler. It wasn't
-        # if sens_freq_needed > sens_freq_eno:
-        #	duty_Nw[loop] = sens_freq_needed
-        # So there's 4 version of the algo. 1. max 2. min. 3. max + if statement. 4. min + if statement
-        Icons = ((Iq + ((((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * sens_freq)) * (random.uniform(
-            energy_cons_var[0], energy_cons_var[1])))  # Think about if I'm dividing by 2 before taking from battery is Iq being misquoted
-        Icons_list.append(Icons)
-        x = prev + (((a) - Icons) / 2)
-        if x > prev:  # This if takes care of the times when battery is full so we don't report greater than 100% storage
-            batterylevel_list.append(prev)
-            batterylevelflag_list.append(2)
-            y = x - prev
-            energygensurplus_list.append(y)
-            energydeficit_list.append(0)
-            sens_freq_list.append(sens_freq)
-
-        elif x < 0:  # This takes care of when battery is empty. Doesn't report negative storage
-            batterylevel_list.append(0)
-            batterylevelflag_list.append(0)
-            energygensurplus_list.append(0)
-            temp = x - prev
-            energydeficit_list.append(temp)
-            prev = 0
-            # Here I could ammend to the amount of tx's they were able to do before the battery died?
-            sens_freq_list.append(0)
-        else:  # Normal operating for system, to calc new battery level
-            batterylevel_list.append(x)
-            batterylevelflag_list.append(1)
-            energygensurplus_list.append(0)
-            prev = x
-            sens_freq_list.append(sens_freq)
-
-        Eg_Nwi[loop] = round(Eg_Nwi[loop], 2)
-        # Have a think about how I abstracted the ENO function with EWMA between N_w and Eg_nwi, should I expand for clarity?
-        Eg_Nwi[loop] = a
-
-        # Sensing frequency considerations
-        cost_per_tx = ((((((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * 1))
-                       * (random.uniform(energy_cons_var[0], energy_cons_var[1])))
-        # residual_energy = (Eg_Nwi[loop] - Iq) - (duty_Nw[loop]*cost_per_tx) # Editing this line to calculate residual energy from the chosen sens freq and not the duty_Nw loop every time
-        residual_energy = (Eg_Nwi[loop] - Iq) - (sens_freq * cost_per_tx)
-        # There is more energy generated than used in the timeslot
-        if loop == Nw:
-            pass
-        else:
-            while abs(residual_energy) > (cost_per_tx + (0.5 * cost_per_tx)):
-                if residual_energy >= cost_per_tx:  # If theres a surplus energy
-                    diff_1 = 0
-                    counter = loop
-                    # This finds the point further along in the loop where the ENO is furthest below the orchestrator
-                    for a, b in zip(duty_Nw[loop:], orchastPlace_list[loop:]):
-                        diff = b - a
-                        if diff > 0:
-                            if diff > diff_1:
-                                index_diff = counter
-                                diff_1 = diff
-                        counter = counter + 1
-                    # These don't do anything unless you change pass to break.
-                    if duty_Nw[index_diff] == max_tx_freq:
-                        break
-                    duty_Nw[index_diff] = duty_Nw[index_diff] + 1
-                    residual_energy = residual_energy - cost_per_tx
-
-                # There is a deficit in energy greater than the energy needed to send a transmission
-                if residual_energy < 0 and abs(residual_energy) > cost_per_tx:
-                    diff_1 = 0
-                    counter = loop
-                    # This finds the point further along in the loop where the ENO is furthest below the orchestrator
-                    for a, b in zip(duty_Nw[loop:], orchastPlace_list[loop:]):
-                        diff = a - b
-                        if diff > 0:
-                            if diff > diff_1:
-                                index_diff = loop
-                                diff_1 = diff
-                        counter = counter + 1
-                    # These don't do anything unless you change pass to break.
-                    if duty_Nw[index_diff] == min_tx_freq:
-                        break
-                    duty_Nw[index_diff] = duty_Nw[index_diff] - 1
-                    residual_energy = residual_energy + cost_per_tx
-                else:
-                    pass
-        #loop2 += 1
-        loop += 1
-        if loop > Nw - 1:
-            # This checks the number of transmissions over or under utilised + is surplus energy, negative is energy defecit
-            sanity_check = round(
-                ((sum(Eg_Nwi)) - (sum(duty_Nw) * cost_per_tx)), 1)
-            sanity.append(sanity_check)
-            loop = 0
-
-    df['Battery Level'] = batterylevel_list
-    df['Battery Level Flag'] = batterylevelflag_list
-    #df['Energy Surplus List'] = energygensurplus_list
-    #df['Energy Deficit List'] = energydeficit_list
-    df['Energy Consumption'] = Icons_list
-    df['Sense Frequency'] = sens_freq_list
-    # Find a way to record the window characteristics
-
-    if debug:
-        print(" => Battery level calculated for battery aware model and added to dataframe")
-    output = sum(sanity) / len(sanity)
-    calcPerf(df, test, 'LESS')
-
-
 # --------------------------------------------------------------------------- #
 def dumpData(test):
     if output_jsons:
@@ -796,13 +252,13 @@ def graphData(df):
            '=================================================')
 
     # index=df.index.get_values()
-    plt.plot(orchas_graph[0], c='blue', linewidth=1.5, label='Orchestrator')
-    plt.plot(static_graph[0], c='green', linewidth=1.5, label='Static')
-    plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
+    # plt.plot(orchas_graph[0], c='blue', linewidth=1.5, label='Orchestrator')
+    # plt.plot(static_graph[0], c='green', linewidth=1.5, label='Static')
+    # plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
     less_graph[0].pop(0)
     less_graph.append(2)
     plt.plot(less_graph[0], c='orange', linewidth=1.5, label='LESS')
-    plt.plot(graph[0], '--', linewidth=1.0, label='Target')
+    # plt.plot(graph[0], '--', linewidth=1.0, label='Target')
     # plt.plot() plot the orchestration requirement as dotted line TD
     legend = plt.legend(loc='upper right', shadow=True)
     plt.xlabel('Time Slot, t', {'color': 'black',
@@ -861,7 +317,7 @@ def graphEg(df):
 
 
 # --------------------------------------------------------------------------- #
-def plotSolarEgen(df, wvList, vectorsa):
+def plotSolarEgen(df, wvList, wcewma_pred_vector):
     print(wcewma_pred_vector)
     solar_list = df["Energy Solar Gen"].tolist()
     pre_list = []
@@ -871,28 +327,29 @@ def plotSolarEgen(df, wvList, vectorsa):
             pre_list.append(refSolarPowerVector[i][j])
     
     plt.figure(1)
-    plt.subplot(211)
-    # print("VECTOR: ", len(wcewma_pred_vector))
-    plt.plot(pre_list, c='yellow', linewidth=1.5, label='Pre')
+    # plt.subplot(211)
+    print("VECTOR: ", len(wcewma_pred_vector))
+    plt.plot(pre_list, c='red', linewidth=1.5, label='Pre')
     plt.plot(solar_list, c='blue', linewidth=1.5, label='Real Solar Data')
-    plt.plot(vectorsa, c='red', linewidth=1.5, label='WC-EWMA')
+    plt.plot(wcewma_pred_vector, c='green', linewidth=1.5, label='WC-EWMA')
     plt.xlabel('Time Slot, t', fontsize='x-large')
     plt.ylabel('Energy Generated (mAh)', fontsize='x-large')
-    plt.grid(True, which='both')
+    # plt.grid(True, which='both')
     plt.minorticks_on
     plt.ylim(ymax=70, ymin=0)
-    plt.xlim(xmax=350, xmin=0)
+    # plt.xlim(xmax=350, xmin=0)
+    plt.xlim(xmax=200, xmin=0)
 
-    plt.subplot(212)
-    x = np.arange(7)    
+    # plt.subplot(212)
+    # x = np.arange(7)    
 
-    plt.bar(x, wvList, width=0.4)
-    plt.xlabel('Day, t', fontsize='x-large')
-    plt.ylabel('Weather volatility', fontsize='x-large')        
-    plt.gca().yaxis.grid(True)    
-    plt.minorticks_on
-    plt.ylim(ymax=8, ymin=0)
-    plt.xlim(xmax=6.5, xmin=-0.5)
+    # plt.bar(x, wvList, width=0.4)
+    # plt.xlabel('Day, t', fontsize='x-large')
+    # plt.ylabel('Weather volatility', fontsize='x-large')        
+    # plt.gca().yaxis.grid(True)    
+    # plt.minorticks_on
+    # plt.ylim(ymax=8, ymin=0)
+    # plt.xlim(xmax=6.5, xmin=-0.5)
     plt.show()
 
 
@@ -908,6 +365,11 @@ def plotWeatherVolatility(wvList):
 # --------------------------------------------------------------------------- #
 # Main
 def main(orch_profile, energy_source):
+    wcewma = WCEWMA(48);
+    eno_static = StaticENO();
+    eno_orchestrator = OrchestratorENO();
+    eno_kansal = KansalENO();
+    eno_less = LESSENO();
     orchest_loop = []
     # orchest_loop.append(orchastLamps)
     # orchest_loop.append(orchastMicro)
@@ -931,16 +393,20 @@ def main(orch_profile, energy_source):
                 if not energy_source:
                     energy_source = energy_combination
                 df = energyGenTotal(df, energy_source)
-                staticWSN(df, test)
+                eno_static.staticWSN(df, test)
+                calcPerf(df, test, 'static')
                 if debug:
                     print(" => Calculating the static WSN performance")
-                orchasWSN(df, test)
+                eno_orchestrator.orchasWSN(df, test)
+                calcPerf(df, test, 'orchas')
                 if debug:
                     print(" => Calculating the centrally controlled WSN performance")
-                enoWSN(df, test)
+                eno_kansal.enoWSN(df, test)
+                calcPerf(df, test, 'eno')
                 if debug:
                     print(" => Calculating the solely ENO controlled WSN performance")
-                lessWSN(df, test)
+                eno_less.lessWSN(df, test)
+                calcPerf(df, test, 'LESS')
                 if debug:
                     print(" => Calculating the LESS=MORE WSN performance")
                 dumpData(test)
@@ -948,24 +414,24 @@ def main(orch_profile, energy_source):
                     # print output_jsons
 
                 wvList = []
-                for i in range(1, 8):
-                    start_slot = (i - 1) * slotPerDayCount
-                    end_slot = (i * slotPerDayCount) - 1                     
-                    wvList.append(weather_volatility_value(df, start_slot, end_slot, 5, 0.8))
+                for i in range(1, 5):
+                    start_slot = (i - 1) * wcewma.slotPerDayCount
+                    end_slot = (i * wcewma.slotPerDayCount) - 1                     
+                    wvList.append(wcewma.weather_volatility_value(df, start_slot, end_slot, 5, 0.8))
                     print("wv(", i,") = ", wvList[i-1])
                 
                 # df, cloudiness_degree_threshold, currentDayIndex, currentDayRefSolarPower, weighting_factor
                 
-                for i in range(1,8):
-                    refSolarPowerVector.insert(i,(getNextDayRefSolarPowerVector(df, 3, i, 0.5)))
+                for i in range(1, 5):
+                    refSolarPowerVector.insert(i,(wcewma.getNextDayRefSolarPowerVector(df, 3, i, 0.5)))
                 
-                wcewma_pred_vector = get_wcewma_for_day(df, refSolarPowerVector)
+                wcewma_pred_vector = wcewma.get_wcewma_for_day(df, refSolarPowerVector)
                 print("len(wcewma_pred_vector)", len(wcewma_pred_vector))
                 print(wcewma_pred_vector)
-                plotSolarEgen(df, wvList, wcewma_pred_vector)
+                # plotSolarEgen(df, wvList, wcewma_pred_vector)
                 # plotWeatherVolatility(wvList)
 
-                # graphData(df)
+                graphData(df)
                 # tableData(df)
                 del output_jsons[:]
                 # graphEg(df)                
