@@ -15,7 +15,13 @@ perTimeDead = [[val(1).perTimeDead, val(2).perTimeDead, val(3).perTimeDead, val(
 x=linspace(1, 12, size(perTimeDead, 1));
 colormap([0,1,0; 0,0,1; 1,0,0; 1,1,0]);   
  
-bar3(x, perTimeDead,'grouped') 
+width = 1;
+h = bar3(x, perTimeDead, width, 'grouped') 
+
+set(h(1),'facecolor',1/255*[0, 179, 179]);
+set(h(2),'facecolor',1/255*[204, 102, 0]);
+set(h(3),'facecolor',1/255*[51, 153, 255]);
+set(h(4),'facecolor',1/255*[249, 188, 6]);
 
 set(gcf,'color','w');
 set(gca,'xcol','black','ycol','black')

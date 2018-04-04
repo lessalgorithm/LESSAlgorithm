@@ -25,29 +25,39 @@ class LESSENO():
             else:
                 pass
 
+        # Modify to introduce energy prediction separately
         # Change this to EG_total
         currentgen_list = df['Energy Generation Total'].tolist()
+
         # This list contains the battery level of the system over the source of the system . Assumes state zero is full battery
         batterylevel_list = [initial_battery_capacity_mah]
+
         #  This is a simple flag to show when battery is full (2),  battery is empty/system dead (0) or nominally operating (1)
         batterylevelflag_list = [2]
+
         # This records surplus energy generation that otherwise wouldn't be used when there is no ENO utility stuff
         energygensurplus_list = [0]
+
         # This list records times of where energy consumption is greater than generation. This is then used to derive battery health
         energydeficit_list = [0]
+
         Icons_list = [0]
+        
         sens_freq_list = []
         sens_freq_list.append(duty_Nw[0])
+        
         # current battery level. Makes assumption that system starts full
-        prev = initial_battery_capacity_mah
+        cur_bat_level = initial_battery_capacity_mah
         sanity = []
         loop = 0
 
-        for a in currentgen_list[1:]:
+        for slot_en_gen in currentgen_list[1:]:
             sens_freq_eno = duty_Nw[loop]
             sens_freq_needed = orchastPlace_list[loop]
+
             # Think about this, this needs to choose the orchastrator amount unless that will kill the sustainability of the system
             sens_freq = min(sens_freq_eno, sens_freq_needed)
+
             # sens_freq = duty_Nw[loop] #added this in instead the line above with hopes it would have been simpler. It wasn't
             # if sens_freq_needed > sens_freq_eno:
             #	duty_Nw[loop] = sens_freq_needed
@@ -55,11 +65,12 @@ class LESSENO():
             Icons = ((Iq + ((((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * sens_freq)) * (random.uniform(
                 energy_cons_var[0], energy_cons_var[1])))  # Think about if I'm dividing by 2 before taking from battery is Iq being misquoted
             Icons_list.append(Icons)
-            x = prev + (((a) - Icons) / 2)
-            if x > prev:  # This if takes care of the times when battery is full so we don't report greater than 100% storage
-                batterylevel_list.append(prev)
+            
+            x = cur_bat_level + (((slot_en_gen) - Icons) / 2)
+            if x > cur_bat_level:  # This if takes care of the times when battery is full so we don't report greater than 100% storage
+                batterylevel_list.append(cur_bat_level)
                 batterylevelflag_list.append(2)
-                y = x - prev
+                y = x - cur_bat_level
                 energygensurplus_list.append(y)
                 energydeficit_list.append(0)
                 sens_freq_list.append(sens_freq)
@@ -68,21 +79,21 @@ class LESSENO():
                 batterylevel_list.append(0)
                 batterylevelflag_list.append(0)
                 energygensurplus_list.append(0)
-                temp = x - prev
+                temp = x - cur_bat_level
                 energydeficit_list.append(temp)
-                prev = 0
+                cur_bat_level = 0
                 # Here I could ammend to the amount of tx's they were able to do before the battery died?
                 sens_freq_list.append(0)
             else:  # Normal operating for system, to calc new battery level
                 batterylevel_list.append(x)
                 batterylevelflag_list.append(1)
                 energygensurplus_list.append(0)
-                prev = x
+                cur_bat_level = x
                 sens_freq_list.append(sens_freq)
 
             Eg_Nwi[loop] = round(Eg_Nwi[loop], 2)
             # Have a think about how I abstracted the ENO function with EWMA between N_w and Eg_nwi, should I expand for clarity?
-            Eg_Nwi[loop] = a
+            Eg_Nwi[loop] = slot_en_gen
 
             # Sensing frequency considerations
             cost_per_tx = ((((((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * 1))

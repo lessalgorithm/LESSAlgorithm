@@ -4,6 +4,27 @@ class WCEWMA():
 	def __init__(self, slotPerDayCount):
 		self.slotPerDayCount = slotPerDayCount;
 
+
+	def get_wcewma_pred_vector(self, df):
+		wvList = []
+		refSolarPowerVector = [[]]
+		wcewma_pred_vector = []
+
+		for i in range(1, 5):
+			start_slot = (i - 1) * self.slotPerDayCount
+			end_slot = (i * self.slotPerDayCount) - 1                     
+			wvList.append(self.weather_volatility_value(df, start_slot, end_slot, 5, 0.8))
+			print("wv(", i,") = ", wvList[i-1])
+                
+            # df, cloudiness_degree_threshold, currentDayIndex, currentDayRefSolarPower, weighting_factor
+                
+		for i in range(1, 5):
+			refSolarPowerVector.insert(i,(self.getNextDayRefSolarPowerVector(df, 3, i, 0.5)))
+
+		wcewma_pred_vector = self.get_wcewma_for_day(df, refSolarPowerVector)
+
+		return wcewma_pred_vector
+
 	# --------------------------------------------------------------------------- #
 	""" This function creates a prediction of current energy generated. This is a
 	placeholder """
@@ -54,6 +75,22 @@ class WCEWMA():
 			vector.append(pred_slot)
 
 		return vector
+
+	def compute_wcewma_vector(self):
+		wvList = []
+		for i in range(1, 5):
+			start_slot = (i - 1) * wcewma.slotPerDayCount
+			end_slot = (i * wcewma.slotPerDayCount) - 1                     
+			wvList.append(wcewma.weather_volatility_value(df, start_slot, end_slot, 5, 0.8))
+			print("wv(", i,") = ", wvList[i-1])
+                
+		# df, cloudiness_degree_threshold, currentDayIndex, currentDayRefSolarPower, weighting_factor
+                
+		for i in range(1, 5):
+			refSolarPowerVector.insert(i,(wcewma.getNextDayRefSolarPowerVector(df, 3, i, 0.5)))
+                
+		wcewma_pred_vector = wcewma.get_wcewma_for_day(df, refSolarPowerVector)
+		return wcewma_pred_vector
 
 
 	# Return weather volatility value (wv(d))
