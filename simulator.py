@@ -406,11 +406,11 @@ def main(orch_profile, energy_source):
 
                 currentgen_list = df['Energy Generation Total'].tolist()
                 print("currentgen_list =>", currentgen_list)
-                wcewma_pred_vector = wcewma.get_wcewma_pred_vector(df)
-                print("wcewma_pred_vector =>", wcewma_pred_vector)
-                
-                # eno_kansal.enoBaseline(df, wcewma_pred_vector)
-                # calcPerf(df, dataset, 'eno')
+                # wcewma_pred_vector = wcewma.compute_wcewma_pred_vector(df)
+                # print("wcewma_pred_vector =>", wcewma_pred_vector)
+
+                eno_kansal.enoBaseline(df, currentgen_list)
+                calcPerf(df, dataset, 'eno')
 
                 if debug:
                     print(" => Calculating the solely ENO controlled WSN performance")

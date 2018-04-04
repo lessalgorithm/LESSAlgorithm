@@ -109,9 +109,12 @@ class KansalENO():
             time_slot += 1          
             if time_slot > Nw - 1:  
                 time_slot = 0
-
-        print ("Length of sense frequency",len(sens_freq_list))
-        print ("Length of batt level",len(batterylevel_list))
+        
+        print ("Length of Battery Level",len(batterylevel_list))
+        print ("Length of Battery Level Flag",len(batterylevelflag_list))
+        print ("Length of Energy Consumption",len(I_cons_list))
+        print ("Length of Sense Frequency",len(sens_freq_list))
+        print ("Length of Orchastration Requirements", len(df['Orchastration Requirements'].tolist()))
 
         ### Data housekeeping
         df['Battery Level'] = batterylevel_list
