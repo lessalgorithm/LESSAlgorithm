@@ -14,6 +14,7 @@ from nrel import *
 import numpy as np
 import random
 import matplotlib.pyplot as plt
+import matlab.engine
 import os
 import sys
 sys.path.append('energy_prediction')
@@ -75,7 +76,6 @@ def sysRequirements(df, test, orchest):
 
 # --------------------------------------------------------------------------- #
 # This function works out the energy generation of the target test
-
 
 def panelEnergyGen(df, test):
     DHI_list = df["DHI"].tolist()
@@ -179,15 +179,15 @@ def NRELtoTEGPower(df):
 placeholder """
 
 
-def createPrediction(df):
-    pred, predoutput, GHI_list, length = [0 for j in range(48)], [], df["GHI"].tolist(
-    ), 1000  # This is updated at end of time window (next time window)
-    for x in range(0, length):
-        for a, b in zip(GHI_list, pred):
-            predoutput.append((b + a) * 0.5)
-        pred, predoutput = predoutput, []
-    df['Prediction'] = pred
-    return df
+# def createPrediction(df):
+#     pred, predoutput, GHI_list, length = [0 for j in range(48)], [], df["GHI"].tolist(
+#     ), 1000  # This is updated at end of time window (next time window)
+#     for x in range(0, length):
+#         for a, b in zip(GHI_list, pred):
+#             predoutput.append((b + a) * 0.5)
+#         pred, predoutput = predoutput, []
+#     df['Prediction'] = pred
+#     return df
 
 # --------------------------------------------------------------------------- #
 # This function calcualtes the performance of a test
@@ -254,11 +254,11 @@ def graphData(df):
     # index=df.index.get_values()
     # plt.plot(orchas_graph[0], c='blue', linewidth=1.5, label='Orchestrator')
     # plt.plot(static_graph[0], c='green', linewidth=1.5, label='Static')
-    # plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
+    plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
     less_graph[0].pop(0)
     less_graph.append(2)
-    plt.plot(less_graph[0], c='orange', linewidth=1.5, label='LESS')
-    # plt.plot(graph[0], '--', linewidth=1.0, label='Target')
+    # plt.plot(less_graph[0], c='orange', linewidth=1.5, label='LESS')
+    plt.plot(graph[0], '--', linewidth=1.0, c='violet', label='Target')
     # plt.plot() plot the orchestration requirement as dotted line TD
     legend = plt.legend(loc='upper right', shadow=True)
     plt.xlabel('Time Slot, t', {'color': 'black',
@@ -411,7 +411,7 @@ def main(orch_profile, energy_source):
                     print(" => Calculating the LESS=MORE WSN performance")
                 dumpData(test)
                 # if debug:
-                    # print output_jsons
+                #     print (output_jsons)
 
                 wvList = []
                 for i in range(1, 5):
@@ -428,13 +428,14 @@ def main(orch_profile, energy_source):
                 wcewma_pred_vector = wcewma.get_wcewma_for_day(df, refSolarPowerVector)
                 print("len(wcewma_pred_vector)", len(wcewma_pred_vector))
                 print(wcewma_pred_vector)
-                # plotSolarEgen(df, wvList, wcewma_pred_vector)
+                plotSolarEgen(df, wvList, wcewma_pred_vector)
                 # plotWeatherVolatility(wvList)
 
                 graphData(df)
+          
                 # tableData(df)
                 del output_jsons[:]
-                # graphEg(df)                
+                # graphEg(df)
 
 
 orchestrator = Orchestrator()
