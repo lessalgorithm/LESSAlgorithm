@@ -252,7 +252,7 @@ def graphData(df):
            '=================================================')
 
     # index=df.index.get_values()
-    # plt.plot(orchas_graph[0], c='blue', linewidth=1.5, label='Orchestrator')
+    plt.plot(orchas_graph[0], c='blue', linewidth=1.5, label='Orchestrator')
     # plt.plot(static_graph[0], c='green', linewidth=1.5, label='Static')
     plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
     less_graph[0].pop(0)

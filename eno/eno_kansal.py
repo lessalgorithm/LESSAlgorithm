@@ -25,16 +25,16 @@ class KansalENO():
         energydeficit_list = [0]
 
         # Holds the total energy consumption per time slot
-        I_cons_list = [0]        
+        I_cons_list = [0]
         
         # Current battery level. Makes assumption that system starts with full battery.
-        cur_bat_capacity = initial_battery_capacity_mah         
+        cur_bat_capacity = initial_battery_capacity_mah
 
         sens_freq_list = []
         sens_freq_list.append(min_tx_freq)
 
         counter = 0
-        time_slot = 0        
+        time_slot = 0
         # print("currentgen_list =>", [ '%.1f' % elem for elem in currentgen_list ])
 
         # for slot_en_gen in currentgen_list[1:]:
@@ -75,11 +75,16 @@ class KansalENO():
             
             # This if takes care of the times when battery is full so we don't report greater than 100% storage
             if new_bat_capacity > cur_bat_capacity:
+                print(new_bat_capacity, ">", cur_bat_capacity)
                 batterylevel_list.append(cur_bat_capacity)
                 batterylevelflag_list.append(2) 
                 energy_surplus = new_bat_capacity - cur_bat_capacity
                 energygensurplus_list.append(energy_surplus)
                 energydeficit_list.append(0)
+                if new_bat_capacity > initial_battery_capacity_mah:
+                    cur_bat_capacity = initial_battery_capacity_mah
+                else:
+                    cur_bat_capacity = new_bat_capacity
                 sens_freq_list.append(sens_freq)
 
             # This takes care of when battery is empty. Doesn't report negative storage
@@ -111,12 +116,6 @@ class KansalENO():
             time_slot += 1          
             if time_slot > Nw - 1:  
                 time_slot = 0
-        
-        print ("Length of Battery Level",len(batterylevel_list))
-        print ("Length of Battery Level Flag",len(batterylevelflag_list))
-        print ("Length of Energy Consumption",len(I_cons_list))
-        print ("Length of Sense Frequency",len(sens_freq_list))
-        print ("Length of Orchastration Requirements", len(df['Orchastration Requirements'].tolist()))
 
         ### Data housekeeping
         df['Battery Level'] = batterylevel_list
