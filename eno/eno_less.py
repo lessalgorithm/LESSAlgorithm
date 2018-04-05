@@ -111,10 +111,10 @@ class LESSENO():
             Icons_list.append(Icons)
             
             x = cur_bat_level + (((slot_en_gen) - Icons) / 2)
-            if x > cur_bat_level:  # This if takes care of the times when battery is full so we don't report greater than 100% storage
-                batterylevel_list.append(cur_bat_level)
+            if x > initial_battery_capacity_mah:  # This if takes care of the times when battery is full so we don't report greater than 100% storage
+                batterylevel_list.append(initial_battery_capacity_mah)
                 batterylevelflag_list.append(2)
-                y = x - cur_bat_level
+                y = ((slot_en_gen) - Icons) / 2
                 energygensurplus_list.append(y)
                 energydeficit_list.append(0)
                 sens_freq_list.append(sens_freq)
@@ -128,6 +128,7 @@ class LESSENO():
                 cur_bat_level = 0
                 # Here I could ammend to the amount of tx's they were able to do before the battery died?
                 sens_freq_list.append(0)
+                
             else:  # Normal operating for system, to calc new battery level
                 batterylevel_list.append(x)
                 batterylevelflag_list.append(1)
