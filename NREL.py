@@ -69,7 +69,7 @@ energy_spar_var = [0.75,1.25]  # To account for sensor to sensor variation
 # orchastMulti = [2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 5, 5, 30, 30, 30, 30, 30, 30, 30, 5, 5, 5, 5, 5, 5, 5, 15, 15, 15, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 15, 5, 5, 5, 2, 2, 2]
 
 # Battery Capacity
-initial_battery_capacity_mah = 30 # 4mah = For TI Tag, this is 24hours in darkness
+initial_battery_capacity_mah = 4 # 4mah = For TI Tag, this is 24hours in darkness
 coulomb_efficiency = .996 # Ability of storage element to deliver and receive energy (percentage in dec)
 battery_self_discharge = .01 # discharge of battery, percentage in dec of total capacity
 

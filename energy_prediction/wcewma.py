@@ -20,7 +20,7 @@ class WCEWMA():
 			end_slot = (i * self.slotPerDayCount) - 1                     
 			wvList.append(self.weather_volatility_value(df, start_slot, end_slot, 5, 0.8))
 			print("wv(", i,") = ", wvList[i-1])
-                
+
             # df, cloudiness_degree_threshold, currentDayIndex, currentDayRefSolarPower, weighting_factor
                 
 		for i in range(1, round(day_count + 1)):
