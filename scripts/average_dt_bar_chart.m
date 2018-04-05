@@ -5,9 +5,9 @@ width = 1;
 figure(1); 
 hold on;
 
-locationDatasets = {'1522947033_TORTotal_solartracking_results.json', 
-                    '1522947144_NYCTotal_solartracking_results.json', 
-                    '1522947186_HTITotal_solartracking_results.json'}
+locationDatasets = {'1522955097_TORTotal_solartracking_results.json', 
+                    '1522955070_NYCTotal_solartracking_results.json', 
+                    '1522955130_HTITotal_solartracking_results.json'}
 
 for location=1:3
     xval=location;    
@@ -55,8 +55,8 @@ function Dt_average = getPredDt_averageForLocation(jsonFile)
     val = jsondecode(str);
     
     %                   static             orchas               eno                less
-    Dt_average = [[val(1).Dt_average, val(5).Dt_average, val(7).Dt_average, val(11).Dt_average],
-                  [val(2).Dt_average, val(6).Dt_average, val(8).Dt_average, val(12).Dt_average],
-                  [val(3).Dt_average, val(7).Dt_average, val(9).Dt_average, val(13).Dt_average],
-                  [val(4).Dt_average, val(8).Dt_average, val(10).Dt_average, val(14).Dt_average]];
+    Dt_average = [[val(1).Dt_average, val(5).Dt_average, val(9).Dt_average, val(13).Dt_average],
+                  [val(2).Dt_average, val(6).Dt_average, val(10).Dt_average, val(14).Dt_average],
+                  [val(3).Dt_average, val(7).Dt_average, val(11).Dt_average, val(15).Dt_average],
+                  [val(4).Dt_average, val(8).Dt_average, val(12).Dt_average, val(16).Dt_average]];
 end
