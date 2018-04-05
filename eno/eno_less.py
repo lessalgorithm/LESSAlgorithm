@@ -1,3 +1,5 @@
+# coding: utf-8
+
 import random
 from nrel import *
 
@@ -11,19 +13,19 @@ class LESSENO():
         # if debug:
         print(" => Working out LESS current consumption bits")
         orchastPlace_list = df['Orchastration Requirements'].tolist()
-        Eg_Nwi2 = [0.1] * Nw
-        Eg_Nwi = [0.1] * Nw
-        duty_Nw = []
-        # This defines the duty cycle starting point for any window size Nw (following Kansal method)
-        for key in range(0, Nw):
-            if key <= round((0.333 * Nw), 0):
-                duty_Nw.append(min_tx_freq)
-            elif key > round((0.333 * Nw), 0) and key <= round((0.666 * Nw)):
-                duty_Nw.append(max_tx_freq)
-            elif key > round((0.666 * Nw)):
-                duty_Nw.append(min_tx_freq)
-            else:
-                pass
+        #Eg_Nwi2 = [0.1] * Nw
+        #Eg_Nwi = [0.1] * Nw
+        # duty_Nw = []
+        # # This defines the duty cycle starting point for any window size Nw (following Kansal method)
+        # for key in range(0, Nw):
+        #     if key <= round((0.333 * Nw), 0):
+        #         duty_Nw.append(min_tx_freq)
+        #     elif key > round((0.333 * Nw), 0) and key <= round((0.666 * Nw)):
+        #         duty_Nw.append(max_tx_freq)
+        #     elif key > round((0.666 * Nw)):
+        #         duty_Nw.append(min_tx_freq)
+        #     else:
+        #         pass
 
         # Modify to introduce energy prediction separately
         # Change this to EG_total
@@ -44,19 +46,61 @@ class LESSENO():
         Icons_list = [0]
         
         sens_freq_list = []
-        sens_freq_list.append(duty_Nw[0])
+        sens_freq_list.append(min_tx_freq)
         
         # current battery level. Makes assumption that system starts full
         cur_bat_level = initial_battery_capacity_mah
-        sanity = []
-        loop = 0
+
+
+        counter = 0
+        time_slot = 0
 
         for slot_en_gen in currentgen_list[1:]:
-            sens_freq_eno = duty_Nw[loop]
-            sens_freq_needed = orchastPlace_list[loop]
+           
+            sens_freq_needed = orchastPlace_list[time_slot]
 
-            # Think about this, this needs to choose the orchastrator amount unless that will kill the sustainability of the system
-            sens_freq = min(sens_freq_eno, sens_freq_needed)
+            if time_slot == 0:
+                # sens_freq_eno = duty_Nw[loop]
+                # Start of Planning Phase
+                day_energy_pred = currentgen_list[counter:counter+Nw]
+                # day_energy_pred = currentgen_list[counter:counter+Nw]
+                # print("day_energy_pred", [ '%.1f' % elem for elem in day_energy_pred ])                
+            
+                # Sensing frequency considerations
+                I_cons_per_tx = ((((((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * 1))
+                               * (random.uniform(energy_cons_var[0], energy_cons_var[1])))
+
+                duty_Nw = []
+                for slot_pred in day_energy_pred:
+                    slot_duty = round(slot_pred/I_cons_per_tx)
+                    
+                    if slot_duty > max_tx_freq:
+                        duty_Nw.append(max_tx_freq)
+                    elif slot_duty < min_tx_freq:
+                        duty_Nw.append(min_tx_freq)
+                    else:
+                        duty_Nw.append(slot_duty)
+
+                #print("duty_Nw =>", duty_Nw)                
+           
+            ### End of Planning Phase
+
+            ### Start of Operations Phase
+            sens_freq_eno = duty_Nw[time_slot]
+
+            test = 'tmax'
+            if "tmin" in test:
+                # Think about this, this needs to choose the orchastrator amount unless that will kill the sustainability of the system
+                sens_freq = min(sens_freq_eno, sens_freq_needed)            
+            if "tmax" in test:
+                sens_freq = max(sens_freq_eno, sens_freq_needed)            
+            if "tfair" in test:
+                #if   
+                sens_freq = avg(sens_freq_eno, sens_freq_needed)
+            if "tbatt" in test:
+                x += (c * (random.uniform(teg_prod_var[0], teg_prod_var[1])))
+
+
 
             # sens_freq = duty_Nw[loop] #added this in instead the line above with hopes it would have been simpler. It wasn't
             # if sens_freq_needed > sens_freq_eno:
@@ -91,64 +135,62 @@ class LESSENO():
                 cur_bat_level = x
                 sens_freq_list.append(sens_freq)
 
-            Eg_Nwi[loop] = round(Eg_Nwi[loop], 2)
+            #Eg_Nwi[time_slot] = round(Eg_Nwi[time_slot], 2)
             # Have a think about how I abstracted the ENO function with EWMA between N_w and Eg_nwi, should I expand for clarity?
-            Eg_Nwi[loop] = slot_en_gen
+            #Eg_Nwi[time_slot] = slot_en_gen
 
             # Sensing frequency considerations
             cost_per_tx = ((((((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * 1))
                            * (random.uniform(energy_cons_var[0], energy_cons_var[1])))
             # residual_energy = (Eg_Nwi[loop] - Iq) - (duty_Nw[loop]*cost_per_tx) # Editing this line to calculate residual energy from the chosen sens freq and not the duty_Nw loop every time
-            residual_energy = (Eg_Nwi[loop] - Iq) - (sens_freq * cost_per_tx)
+            #residual_energy = (Eg_Nwi[time_slot] - Iq) - (sens_freq * cost_per_tx)
             # There is more energy generated than used in the timeslot
-            if loop == Nw:
-                pass
-            else:
-                while abs(residual_energy) > (cost_per_tx + (0.5 * cost_per_tx)):
-                    if residual_energy >= cost_per_tx:  # If theres a surplus energy
-                        diff_1 = 0
-                        counter = loop
+            #if time_slot == Nw:
+            #    pass
+            #else:
+            #    while abs(residual_energy) > (cost_per_tx + (0.5 * cost_per_tx)):
+            #        if residual_energy >= cost_per_tx:  # If theres a surplus energy
+            #            diff_1 = 0
+            #            counter = time_slot
                         # This finds the point further along in the loop where the ENO is furthest below the orchestrator
-                        for a, b in zip(duty_Nw[loop:], orchastPlace_list[loop:]):
-                            diff = b - a
-                            if diff > 0:
-                                if diff > diff_1:
-                                    index_diff = counter
-                                    diff_1 = diff
-                            counter = counter + 1
+            #            for a, b in zip(duty_Nw[time_slot:], orchastPlace_list[time_slot:]):
+             #               diff = b - a
+            #                if diff > 0:
+            #                    if diff > diff_1:
+            #                       index_diff = counter
+            #                        diff_1 = diff
+            #                counter = counter + 1
                         # These don't do anything unless you change pass to break.
-                        if duty_Nw[index_diff] == max_tx_freq:
-                            break
-                        duty_Nw[index_diff] = duty_Nw[index_diff] + 1
-                        residual_energy = residual_energy - cost_per_tx
+            #            if duty_Nw[index_diff] == max_tx_freq:
+            #                break
+            #            duty_Nw[index_diff] = duty_Nw[index_diff] + 1
+            #            residual_energy = residual_energy - cost_per_tx
 
                     # There is a deficit in energy greater than the energy needed to send a transmission
-                    if residual_energy < 0 and abs(residual_energy) > cost_per_tx:
-                        diff_1 = 0
-                        counter = loop
+            #        if residual_energy < 0 and abs(residual_energy) > cost_per_tx:
+            #            diff_1 = 0
+            #            counter = time_slot
                         # This finds the point further along in the loop where the ENO is furthest below the orchestrator
-                        for a, b in zip(duty_Nw[loop:], orchastPlace_list[loop:]):
-                            diff = a - b
-                            if diff > 0:
-                                if diff > diff_1:
-                                    index_diff = loop
-                                    diff_1 = diff
-                            counter = counter + 1
+            #            for a, b in zip(duty_Nw[time_slot:], orchastPlace_list[time_slot:]):
+            #                diff = a - b
+            #                if diff > 0:
+            #                    if diff > diff_1:
+            #                        index_diff = time_slot
+            #                        diff_1 = diff
+            #                counter = counter + 1
                         # These don't do anything unless you change pass to break.
-                        if duty_Nw[index_diff] == min_tx_freq:
-                            break
-                        duty_Nw[index_diff] = duty_Nw[index_diff] - 1
-                        residual_energy = residual_energy + cost_per_tx
-                    else:
-                        pass
+            #            if duty_Nw[index_diff] == min_tx_freq:
+            #                break
+            #            duty_Nw[index_diff] = duty_Nw[index_diff] - 1
+            #            residual_energy = residual_energy + cost_per_tx
+            #        else:
+            #            pass
             #loop2 += 1
-            loop += 1
-            if loop > Nw - 1:
-                # This checks the number of transmissions over or under utilised + is surplus energy, negative is energy defecit
-                sanity_check = round(
-                    ((sum(Eg_Nwi)) - (sum(duty_Nw) * cost_per_tx)), 1)
-                sanity.append(sanity_check)
-                loop = 0
+
+            counter += 1
+            time_slot += 1          
+            if time_slot > Nw - 1:  
+                time_slot = 0
 
         df['Battery Level'] = batterylevel_list
         df['Battery Level Flag'] = batterylevelflag_list
@@ -160,4 +202,4 @@ class LESSENO():
 
         # if debug:
         print(" => Battery level calculated for battery aware model and added to dataframe")
-        output = sum(sanity) / len(sanity)
+        #output = sum(sanity) / len(sanity)
