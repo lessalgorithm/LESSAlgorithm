@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import random
-from nrel import *
+from NREL import *
 
 class OrchestratorENO():
 
@@ -33,7 +33,7 @@ class OrchestratorENO():
 		# print("orchestPlace_List => ", orchestPlace_List);
 
 		sens_freq_list = []
-		sens_freq_list.append(orchestPlace_List[0])
+		# sens_freq_list.append(orchestPlace_List[0])
 		
 		# I_cons_list = [((((Iq + ((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * a)) * (random.uniform(
 		# 	energy_cons_var[0], energy_cons_var[1]))) for a in orchestPlace_List]  # Think about if I'm dividing by 2 before taking from battery is Iq being misquoted
@@ -52,14 +52,14 @@ class OrchestratorENO():
 			I_cons_list.append(I_cons)
 
 			new_energy_level = cur_bat_level + ((slot_en_gen - I_cons) / 2)
-
-			print("orchestPlace_List[counter] => ", orchestPlace_List[counter], "I_cons => ", I_cons, "cur_bat_level => ", cur_bat_level, "new_energy_level => ", new_energy_level, "slot_en_gen => ", slot_en_gen)
+			# print("orchestPlace_List[counter] => ", orchestPlace_List[counter], "I_cons => ", I_cons, "cur_bat_level => ", cur_bat_level, "new_energy_level => ", new_energy_level, "slot_en_gen => ", slot_en_gen)
 			
+			# This if takes care of the times when battery is full so we don't report greater than 100% storage
 			if new_energy_level > initial_battery_capacity_mah:
 				print(new_energy_level, ">", cur_bat_level)			
-				batterylevel_list.append(cur_bat_level)
+				batterylevel_list.append(initial_battery_capacity_mah)
 				batterylevelflag_list.append(2) 
-				energy_surplus = new_energy_level - cur_bat_level
+				energy_surplus = new_energy_level - initial_battery_capacity_mah
 				energygensurplus_list.append(energy_surplus)
 				energydeficit_list.append(0)				
 				cur_bat_level = initial_battery_capacity_mah

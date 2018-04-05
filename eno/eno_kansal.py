@@ -2,7 +2,7 @@
 
 import random
 import numpy as np
-from nrel import *
+from NREL import *
 
 class KansalENO():
 
@@ -74,17 +74,14 @@ class KansalENO():
             new_bat_capacity = cur_bat_capacity + ((slot_en_gen - I_cons) / 2)
             
             # This if takes care of the times when battery is full so we don't report greater than 100% storage
-            if new_bat_capacity > cur_bat_capacity:
+            if new_bat_capacity > initial_battery_capacity_mah:
                 # print(new_bat_capacity, ">", cur_bat_capacity)
-                batterylevel_list.append(cur_bat_capacity)
+                batterylevel_list.append(initial_battery_capacity_mah)
                 batterylevelflag_list.append(2) 
-                energy_surplus = new_bat_capacity - cur_bat_capacity
+                energy_surplus = new_bat_capacity - initial_battery_capacity_mah
                 energygensurplus_list.append(energy_surplus)
                 energydeficit_list.append(0)
-                if new_bat_capacity > initial_battery_capacity_mah:
-                    cur_bat_capacity = initial_battery_capacity_mah
-                else:
-                    cur_bat_capacity = new_bat_capacity
+                cur_bat_capacity = initial_battery_capacity_mah
                 sens_freq_list.append(sens_freq)
 
             # This takes care of when battery is empty. Doesn't report negative storage

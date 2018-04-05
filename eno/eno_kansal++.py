@@ -1,6 +1,6 @@
 import random
 import numpy as np
-from nrel import *
+from NREL import *
 
 class KansalWCEWMA_ENO():
 

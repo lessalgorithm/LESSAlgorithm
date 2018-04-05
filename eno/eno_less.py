@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import random
-from nrel import *
+from NREL import *
 
 class LESSENO():
 

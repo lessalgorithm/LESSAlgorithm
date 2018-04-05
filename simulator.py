@@ -10,7 +10,7 @@ import pandas as pd
 import time
 import math
 import simplejson
-from nrel import *
+from NREL import *
 import numpy as np
 import random
 import matplotlib.pyplot as plt
@@ -257,7 +257,7 @@ def graphData(df):
     # plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
     less_graph[0].pop(0)
     less_graph.append(2)
-    plt.plot(less_graph[0], c='orange', linewidth=1.5, label='LESS')
+    # plt.plot(less_graph[0], c='orange', linewidth=1.5, label='LESS')
     plt.plot(graph[0], '--', linewidth=1.0, c='violet', label='Target')
     # plt.plot() plot the orchestration requirement as dotted line TD
     legend = plt.legend(loc='upper right', shadow=True)
