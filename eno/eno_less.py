@@ -88,7 +88,7 @@ class LESSENO():
             ### Start of Operations Phase
             sens_freq_eno = duty_Nw[time_slot]
 
-            test = 'tmax'
+            test = 'tmin'
             if "tmin" in test:
                 # Think about this, this needs to choose the orchastrator amount unless that will kill the sustainability of the system
                 sens_freq = min(sens_freq_eno, sens_freq_needed)            
