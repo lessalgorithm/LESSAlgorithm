@@ -87,3 +87,8 @@ per_deficit_use = 0.2 # whats this?
 solar_prod_var = [1,1]
 wind_prod_var  = [1,1]
 teg_prod_var = [1,1]
+
+# SET parameters
+ec_tracking = 1.2 # from globecom
+ec_ota = 0.68 # 1400mw /3.3  /(3600*5)
+ec_datacom = 0.31 # from sok work

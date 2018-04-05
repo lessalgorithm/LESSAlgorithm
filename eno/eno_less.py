@@ -179,10 +179,10 @@ class LESSENO():
                 batterylevelflag_list.append(1)
                 y = ((slot_en_gen) - Icons) / 2
                 #energygensurplus_list.append(y)
-                energygensurplus_list.append(0)
                 energydeficit_list.append(0)
                 sens_freq_list.append(sens_freq)
-                LESSENO.setWSN(self, df, y)
+                surp = LESSENO.setWSN(self, df, y)
+                energygensurplus_list.append(surp)
                 cur_bat_level = initial_battery_capacity_mah
 
             elif x < 0:  # This takes care of when battery is empty. Doesn't report negative storage
