@@ -181,7 +181,7 @@ class LESSENO():
                 #energygensurplus_list.append(y)
                 energydeficit_list.append(0)
                 sens_freq_list.append(sens_freq)
-                surp = LESSENO.setWSN(self, df, y)
+                surp = LESSENO.setWSN(self, df, y,)
                 energygensurplus_list.append(surp)
                 cur_bat_level = initial_battery_capacity_mah
 
@@ -296,5 +296,11 @@ class LESSENO():
         return batt_levelf
         
     def setWSN(self, df, surplusE):
-        # print("Do surplus tasks")
-        pass
+        if  surplusE > ec_tracking:
+            surplusE = surplusE - ec_tracking 
+        if  surplusE > ec_ota:
+            surplusE = surplusE - ec_ota
+        if  surplusE > ec_datacom:
+            surplusE = surplusE - ec_datacom
+
+        return surplusE
