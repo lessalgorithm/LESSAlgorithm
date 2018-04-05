@@ -234,8 +234,8 @@ def calcPerf(df, test, name):
 
             orchestrator_fullfilment.append(orchest_met_per)
 
-            if name == 'static':
-                print("sense_freq =>", sense_freq, "orch_reqs =>", orch_reqs, "orchest_met_per =>", orchest_met_per);
+            # if name == 'LESS':
+                # print("sense_freq =>", sense_freq, "orch_reqs =>", orch_reqs, "orchest_met_per =>", orchest_met_per);
 
         orchestrator_fullfilment_per = (round(sum(orchestrator_fullfilment) / len(orchestrator_fullfilment), 2))
 
@@ -285,10 +285,12 @@ def graphData(df):
 
     # index=df.index.get_values()
     # plt.plot(orchas_graph[0], c='blue', linewidth=1.5, label='Orchestrator')
+
     #plt.plot(static_graph[0], c='green', linewidth=1.5, label='Static')
     #plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
     less_graph[0].pop(0)
     less_graph.append(2)
+
     plt.plot(less_graph[0], c='orange', linewidth=1.5, label='LESS')
     plt.plot(graph[0], '--', linewidth=1.0, c='violet', label='Target')
     # plt.plot() plot the orchestration requirement as dotted line TD
