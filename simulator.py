@@ -198,9 +198,10 @@ def calcPerf(df, test, name):
     sens_freq_list = df['Sense Frequency'].tolist()
     batterylevelflag_list = df['Battery Level Flag'].tolist()
     orchastPlace_list = df['Orchastration Requirements'].tolist()
+    print("orchastPlace_list size =>", len(orchastPlace_list))
+    print("sens_freq_list =>", len(sens_freq_list))
 
-    average = round(sum(sens_freq_list) / len(sens_freq_list),
-                    2)  # average sensing rate for ENO
+    average = round(sum(sens_freq_list) / len(sens_freq_list), 2)  # average sensing rate for ENO
 
     dead_metric = batterylevelflag_list.count(0)
     dead_metric_per = (dead_metric / len(batterylevelflag_list))
@@ -255,7 +256,7 @@ def graphData(df):
     # index=df.index.get_values()
     # plt.plot(orchas_graph[0], c='blue', linewidth=1.5, label='Orchestrator')
     # plt.plot(static_graph[0], c='green', linewidth=1.5, label='Static')
-    plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
+    # plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
     #less_graph[0].pop(0)
     #less_graph.append(2)
     plt.plot(less_graph[0], c='orange', linewidth=1.5, label='LESS')
@@ -269,7 +270,7 @@ def graphData(df):
     plt.grid(True, which='both')
     plt.minorticks_on
     plt.ylim(ymax=33, ymin=0)
-    plt.xlim(xmax=350, xmin=0)
+    plt.xlim(xmax=1000, xmin=0)
     plt.show()
     # Add labelling automatically
     # Change show graph to save graph
@@ -319,7 +320,7 @@ def graphEg(df):
 
 # --------------------------------------------------------------------------- #
 def plotSolarEgen(df, wvList, wcewma_pred_vector):
-    print(wcewma_pred_vector)
+    # print(wcewma_pred_vector)
     solar_list = df["Energy Solar Gen"].tolist()
     pre_list = []
 
@@ -376,9 +377,9 @@ def main(orch_profile, energy_source):
     # orchest_loop.append(orchastMulti)
     orchest_loop.append(orch_profile)    
     for orchest in orchest_loop:  
-        print("orchest =>", orchest)      
+        # print("orchest =>", orchest)      
         for dataset in dataset_list:
-            print("dataset =>", dataset)
+            # print("dataset =>", dataset)
             # loads environmental variables from location and time defined in NREL.py. If not local it downloads them from the NREL database and parses them for use.
             df = dfLoad(dataset)
             if not df.empty:
@@ -406,7 +407,7 @@ def main(orch_profile, energy_source):
                 # eno_kansal.enoWSN(df, dataset)
 
                 currentgen_list = df['Energy Generation Total'].tolist()
-                print("currentgen_list =>", currentgen_list)
+                # print("currentgen_list =>", currentgen_list)
                 # wcewma_pred_vector = wcewma.compute_wcewma_pred_vector(df)
                 # print("wcewma_pred_vector =>", wcewma_pred_vector)
 

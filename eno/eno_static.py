@@ -53,17 +53,17 @@ class StaticENO():
 				sens_freq_list.append(sens_freq)			
 				
 			elif new_energy_level < 0:  # This takes care of when battery is empty. Doesn't report negative storage
-				print("new_energy_level < 0")
+				# print("new_energy_level < 0")
 				batterylevel_list.append(0)
 				batterylevelflag_list.append(0)
 				energygensurplus_list.append(0)
 				energydeficit_list.append((slot_en_gen - I_cons) / 2)
-				print("energy deficit =>", (slot_en_gen - I_cons) / 2)
+				# print("energy deficit =>", (slot_en_gen - I_cons) / 2)
 				cur_bat_level = 0
 				sens_freq_list.append(0)			
 
 			else:  # Normal operating for system, to calc new battery level
-				print("normal")
+				# print("normal")
 				batterylevel_list.append(new_energy_level)
 				batterylevelflag_list.append(1)
 				energygensurplus_list.append(0)

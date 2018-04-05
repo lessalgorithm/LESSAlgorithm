@@ -7,7 +7,7 @@ storage = True # this metric determines if anything is dumped to the outputJSON
 
 # This is to configure each Test (or do multiple tests sequentually) Currently each of these are for a week but there is a year dataset too
 #test_loop = ['0ATotal','0BTotal']
-dataset_list = ['0ATotal']
+dataset_list = ['NYCTotal']
 energy_combination = 's'  # There's nine combinations between wind solar and thermal. Let this be chosen by a string contain some or all of s=solar,t=thermal and w=wind
 
 #  Configuration  metrics to convert NREL data to power output of a solar cell
@@ -15,7 +15,7 @@ foreground_albedo = 0.2 # This is a standard value recommended by NREL but has a
 
 #Solar Panel Metrics
 solar_panel_voltage = 3.3
-solar_panel_active_area_m2 = 0.002 # 0.002 has been standard for testing (20cm2)
+solar_panel_active_area_m2 = 0.0001 # 0.002 has been standard for testing (20cm2)
 solar_panel_efficiency = 0.15 #as percentage 0.15
 power_conditioning_efficiency = 1
 temperature_coefficient = 0.0049
