@@ -5,9 +5,9 @@ width = 1;
 figure(1); 
 hold on;
 
-locationDatasets = {'1522947033_TORTotal_solartracking_results.json', 
-                    '1522947144_NYCTotal_solartracking_results.json', 
-                    '1522947186_HTITotal_solartracking_results.json'}
+locationDatasets = {'1522955790_TORTotal_solartracking_results.json', 
+                    '1522955991_NYCTotal_solartracking_results.json', 
+                    '1522955717_HTITotal_solartracking_results.json'}
 
 for location=1:3
     xval=location;    
@@ -45,6 +45,8 @@ set(axes1,'YTick',[1 2 3 4],'YTickLabel',...
 
 set(axes1,'XTick',[1 2 3 4],'XTickLabel',...
      {'Toronto','New York','Haiti'});
+
+ view(axes1,[152.30993247402 60.4]);
  
 function perTimeDead = getPredTimeDeadForLocation(jsonFile)
     fname = jsonFile; 
@@ -55,8 +57,8 @@ function perTimeDead = getPredTimeDeadForLocation(jsonFile)
     val = jsondecode(str);
 
     %                     static             orchas               eno                less
-    perTimeDead = [[val(1).perTimeDead, val(5).perTimeDead, val(7).perTimeDead, val(11).perTimeDead],
-                   [val(2).perTimeDead, val(6).perTimeDead, val(8).perTimeDead, val(12).perTimeDead],
-                   [val(3).perTimeDead, val(7).perTimeDead, val(9).perTimeDead, val(13).perTimeDead],
-                   [val(4).perTimeDead, val(8).perTimeDead, val(10).perTimeDead, val(14).perTimeDead]];
+    perTimeDead = [[val(1).perTimeDead, val(5).perTimeDead, val(9).perTimeDead, val(13).perTimeDead],
+                   [val(2).perTimeDead, val(6).perTimeDead, val(10).perTimeDead, val(14).perTimeDead],
+                   [val(3).perTimeDead, val(7).perTimeDead, val(11).perTimeDead, val(15).perTimeDead],
+                   [val(4).perTimeDead, val(8).perTimeDead, val(12).perTimeDead, val(16).perTimeDead]];
 end

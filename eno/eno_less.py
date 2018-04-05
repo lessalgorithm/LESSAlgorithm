@@ -33,7 +33,7 @@ class LESSENO():
         Icons_list = [0]
         
         sens_freq_list = []
-        sens_freq_list.append(min_tx_freq)
+        # sens_freq_list.append(min_tx_freq)
         
         # current battery level. Makes assumption that system starts full
         cur_bat_level = initial_battery_capacity_mah
@@ -77,7 +77,7 @@ class LESSENO():
                         #p1_sens_freq_diff.append(op - dt)
                         p1_sens_freq_diff.append(min(dt, op) -op)
 
-                    print p1_sens_freq_diff
+                    # print p1_sens_freq_diff
                     batt_level = LESSENO.battLevel(self,p1_sens_freq,day_energy_pred,I_cons_per_tx,cur_bat_levelp)
                     
                     cur_bat_levelp = batt_level[-1:]
@@ -259,6 +259,8 @@ class LESSENO():
             time_slot += 1          
             if time_slot > Nw - 1:  
                 time_slot = 0
+
+        sens_freq_list.append(min_tx_freq)
 
         #print batterylevel_list
         df['Battery Level'] = batterylevel_list

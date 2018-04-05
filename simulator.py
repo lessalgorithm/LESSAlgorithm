@@ -199,17 +199,23 @@ def calcPerf(df, test, name):
     quarter_year_data = len(df['Sense Frequency'].tolist()) // 4
 
     sens_freq_list = df['Sense Frequency'].tolist()
+    print("sens_freq_list before =>", len(sens_freq_list))
+    # sens_freq_list = [2] +  sens_freq_list
+    print("sens_freq_list after =>", len(sens_freq_list))
+    del sens_freq_list[-1]    
+    # less_graph.append(2)
+
     sens_freq_by_quarter_year = [sens_freq_list[i:i+quarter_year_data] 
-            for i in range(0, len(sens_freq_list), quarter_year_data)]    
+            for i in range(0, len(sens_freq_list), quarter_year_data)]
 
     batterylevelflag_list = df['Battery Level Flag'].tolist()
     batterylevelflag_by_quarter_year = [batterylevelflag_list[i:i+quarter_year_data] 
-            for i in range(0, len(batterylevelflag_list), quarter_year_data)]    
+            for i in range(0, len(batterylevelflag_list), quarter_year_data)]
     
     orchastPlace_list = df['Orchastration Requirements'].tolist()
-    orchastPlace_by_quarter_year = [orchastPlace_list[i:i+quarter_year_data] 
+    orchastPlace_by_quarter_year = [orchastPlace_list[i:i+quarter_year_data]
             for i in range(0, len(orchastPlace_list), quarter_year_data)]
-    
+
     # print("orchastPlace_list size =>", len(orchastPlace_list))
     # print("sens_freq_list =>", len(sens_freq_list))    
 
@@ -234,8 +240,8 @@ def calcPerf(df, test, name):
 
             orchestrator_fullfilment.append(orchest_met_per)
 
-            # if name == 'LESS':
-                # print("sense_freq =>", sense_freq, "orch_reqs =>", orch_reqs, "orchest_met_per =>", orchest_met_per);
+            if name == 'LESS':
+                print("sense_freq =>", sense_freq, "orch_reqs =>", orch_reqs, "orchest_met_per =>", orchest_met_per);
 
         orchestrator_fullfilment_per = (round(sum(orchestrator_fullfilment) / len(orchestrator_fullfilment), 2))
 
@@ -284,12 +290,11 @@ def graphData(df):
            '=================================================')
 
     # index=df.index.get_values()
-    # plt.plot(orchas_graph[0], c='blue', linewidth=1.5, label='Orchestrator')
-
+    plt.plot(orchas_graph[0], c='blue', linewidth=1.5, label='Orchestrator')
     #plt.plot(static_graph[0], c='green', linewidth=1.5, label='Static')
-    #plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
-    less_graph[0].pop(0)
-    less_graph.append(2)
+    # plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
+    # less_graph[0].pop(0)
+    # less_graph.append(2)
 
     plt.plot(less_graph[0], c='orange', linewidth=1.5, label='LESS')
     plt.plot(graph[0], '--', linewidth=1.0, c='violet', label='Target')
