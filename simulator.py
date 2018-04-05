@@ -354,7 +354,7 @@ def plotSolarEgen(df, wvList, wcewma_pred_vector):
     plt.minorticks_on
     plt.ylim(ymax=70, ymin=0)
     # plt.xlim(xmax=350, xmin=0)
-    plt.xlim(xmax=200, xmin=0)
+    plt.xlim(xmax=366, xmin=0)
 
     # plt.subplot(212)
     # x = np.arange(7)    
