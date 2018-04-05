@@ -45,7 +45,7 @@ class OrchestratorENO():
 		counter = 0
 
 		# for a, slot_en_gen, orchest_req in zip(Icons_list[1:], currentgen_list[1:], orchestPlace_List[1:]):
-		for slot_en_gen in currentgen_list[1:]:
+		for slot_en_gen in currentgen_list[1:]:		
 			
 			I_cons = ((Iq + ((((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * orchestPlace_List[counter])) * (random.uniform(
 			energy_cons_var[0], energy_cons_var[1])))  # Think about if I'm dividing by 2 before taking from battery is Iq being misquoted

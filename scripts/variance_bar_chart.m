@@ -1,4 +1,4 @@
-fname = 'solartracking_results.json'; 
+fname = '1522936105_TORTotal_solartracking_results.json'; 
 fid = fopen(fname); 
 raw = fread(fid,inf);
 str = char(raw'); 

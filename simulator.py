@@ -195,30 +195,45 @@ placeholder """
 
 def calcPerf(df, test, name):
     # Calculate metrics for how well system performs
+    
+    quarter_year_data = len(df['Sense Frequency'].tolist()) // 4
+
     sens_freq_list = df['Sense Frequency'].tolist()
+    sens_freq_by_quarter_year = [sens_freq_list[i:i+quarter_year_data] 
+            for i in range(0, len(sens_freq_list), quarter_year_data)]    
+
     batterylevelflag_list = df['Battery Level Flag'].tolist()
+    batterylevelflag_by_quarter_year = [batterylevelflag_list[i:i+quarter_year_data] 
+            for i in range(0, len(batterylevelflag_list), quarter_year_data)]    
+    
     orchastPlace_list = df['Orchastration Requirements'].tolist()
-    print("orchastPlace_list size =>", len(orchastPlace_list))
-    print("sens_freq_list =>", len(sens_freq_list))
+    orchastPlace_by_quarter_year = [orchastPlace_list[i:i+quarter_year_data] 
+            for i in range(0, len(orchastPlace_list), quarter_year_data)]    
+    
+    # print("orchastPlace_list size =>", len(orchastPlace_list))
+    # print("sens_freq_list =>", len(sens_freq_list))    
 
-    average = round(sum(sens_freq_list) / len(sens_freq_list), 2)  # average sensing rate for ENO
+    for i in range(0,4):        
+        average = round(sum(sens_freq_by_quarter_year[i]) / len(sens_freq_by_quarter_year[i]), 2)  # average sensing rate for ENO
 
-    dead_metric = batterylevelflag_list.count(0)
-    dead_metric_per = (dead_metric / len(batterylevelflag_list))
+        dead_metric = batterylevelflag_by_quarter_year[i].count(0)
+        dead_metric_per = (dead_metric / len(batterylevelflag_by_quarter_year[i])*100)
 
-    waste_metric = batterylevelflag_list.count(2)
-    waste_metric_per = (waste_metric / len(batterylevelflag_list))
+        waste_metric = batterylevelflag_by_quarter_year[i].count(2)
+        waste_metric_per = (waste_metric / len(batterylevelflag_by_quarter_year[i])*100)
 
-    varience = np.var(sens_freq_list)
+        varience = np.var(sens_freq_by_quarter_year[i])
 
-    # Time the orchastrator requirements were met - got to think about how this is represented (especically over provisioning)
-    orchas = []
-    for a, b in zip(sens_freq_list, orchastPlace_list):
-        orchas.append(a - b)
+        # Time the orchastrator requirements were met - got to think about how this is represented (especically over provisioning)
+        orchas = []
+        for a, b in zip(sens_freq_by_quarter_year[i], orchastPlace_by_quarter_year[i]):
+            orchas.append(a - b)
 
-    if storage:
-        output_jsons.append({'source': test, 'test': name, 'Dt_average': average, 'variance': varience, 'perTimeDead': dead_metric_per,
-                             'perTimeWasted': waste_metric_per, 'orchas': orchastPlace_list, 'sense_freq': sens_freq_list, 'orchas_diff': orchas})
+        season = {0: 'jan-march', 1: 'april-jun', 2:'jul-sep', 3:'oct-dec'}
+
+        if storage:
+            output_jsons.append({'source': test, 'test': name, 'season': season[i], 'Dt_average': average, 'variance': varience, 'perTimeDead': dead_metric_per,
+                                 'perTimeWasted': waste_metric_per, 'orchas': orchastPlace_list, 'sense_freq': sens_freq_list, 'orchas_diff': orchas})
 
 # Performance here is described as the number of transmissions, time alive, time dead, variance, wasted energy.
 
@@ -254,12 +269,12 @@ def graphData(df):
            '=================================================')
 
     # index=df.index.get_values()
-    # plt.plot(orchas_graph[0], c='blue', linewidth=1.5, label='Orchestrator')
+    plt.plot(orchas_graph[0], c='blue', linewidth=1.5, label='Orchestrator')
     # plt.plot(static_graph[0], c='green', linewidth=1.5, label='Static')
     # plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
     #less_graph[0].pop(0)
     #less_graph.append(2)
-    plt.plot(less_graph[0], c='orange', linewidth=1.5, label='LESS')
+    # plt.plot(less_graph[0], c='orange', linewidth=1.5, label='LESS')
     plt.plot(graph[0], '--', linewidth=1.0, c='violet', label='Target')
     # plt.plot() plot the orchestration requirement as dotted line TD
     legend = plt.legend(loc='upper right', shadow=True)
