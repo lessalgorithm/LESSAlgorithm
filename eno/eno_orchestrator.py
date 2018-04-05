@@ -33,7 +33,7 @@ class OrchestratorENO():
 		# print("orchestPlace_List => ", orchestPlace_List);
 
 		sens_freq_list = []
-		# sens_freq_list.append(orchestPlace_List[0])
+		sens_freq_list.append(orchestPlace_List[0])
 		
 		# I_cons_list = [((((Iq + ((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * a)) * (random.uniform(
 		# 	energy_cons_var[0], energy_cons_var[1]))) for a in orchestPlace_List]  # Think about if I'm dividing by 2 before taking from battery is Iq being misquoted

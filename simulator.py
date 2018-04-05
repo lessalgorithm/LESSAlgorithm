@@ -235,6 +235,7 @@ def dumpData(test):
 def graphData(df):
     tests = ['orchas', 'static', 'LESS', 'eno']
     static_graph, eno_graph, less_graph, orchas_graph, graph = [], [], [], [], []
+    # graph.append(min_tx_freq)
     for name in tests:
         for key in output_jsons:
             if key['test'] in "orchas":
@@ -243,21 +244,21 @@ def graphData(df):
             if key['test'] in "eno":
                 eno_graph.append(key['sense_freq'])
             if key['test'] in "LESS":
-                less_graph.append(key['sense_freq'])
+                less_graph.append(key['sense_freq'])            
             if key['test'] in "static":
-                static_graph.append(key['sense_freq'])
-                graph.append(key['orchas'])
-
+                static_graph.append(key['sense_freq'])                
+                graph.append(key['orchas']) 
+    
     print ('\n================================================'
            '=================================================')
 
     # index=df.index.get_values()
-    plt.plot(orchas_graph[0], c='blue', linewidth=1.5, label='Orchestrator')
+    # plt.plot(orchas_graph[0], c='blue', linewidth=1.5, label='Orchestrator')
     # plt.plot(static_graph[0], c='green', linewidth=1.5, label='Static')
-    # plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
-    less_graph[0].pop(0)
-    less_graph.append(2)
-    # plt.plot(less_graph[0], c='orange', linewidth=1.5, label='LESS')
+    plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
+    #less_graph[0].pop(0)
+    #less_graph.append(2)
+    plt.plot(less_graph[0], c='orange', linewidth=1.5, label='LESS')
     plt.plot(graph[0], '--', linewidth=1.0, c='violet', label='Target')
     # plt.plot() plot the orchestration requirement as dotted line TD
     legend = plt.legend(loc='upper right', shadow=True)

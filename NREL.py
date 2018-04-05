@@ -15,7 +15,7 @@ foreground_albedo = 0.2 # This is a standard value recommended by NREL but has a
 
 #Solar Panel Metrics
 solar_panel_voltage = 3.3
-solar_panel_active_area_m2 = 0.0001 # 0.002 has been standard for testing (20cm2)
+solar_panel_active_area_m2 = 0.002 # 0.002 has been standard for testing (20cm2)
 solar_panel_efficiency = 0.15 #as percentage 0.15
 power_conditioning_efficiency = 1
 temperature_coefficient = 0.0049
