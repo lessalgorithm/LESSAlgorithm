@@ -1,3 +1,6 @@
+# coding: utf-8
+
+
 class WCEWMA():
 	"""Provides the implementation of the WC-EWMA energy prediction algorithm."""
 
