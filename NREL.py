@@ -7,7 +7,7 @@ storage = True # this metric determines if anything is dumped to the outputJSON
 
 # This is to configure each Test (or do multiple tests sequentually) Currently each of these are for a week but there is a year dataset too
 #test_loop = ['0ATotal','0BTotal']
-dataset_list = ['0ATotal']
+dataset_list = ['HTITotal']
 energy_combination = 's'  # There's nine combinations between wind solar and thermal. Let this be chosen by a string contain some or all of s=solar,t=thermal and w=wind
 
 #  Configuration  metrics to convert NREL data to power output of a solar cell
