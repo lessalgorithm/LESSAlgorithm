@@ -15,7 +15,7 @@ foreground_albedo = 0.2 # This is a standard value recommended by NREL but has a
 
 #Solar Panel Metrics
 solar_panel_voltage = 3.3
-solar_panel_active_area_m2 = 0.0001 # 0.002 has been standard for testing (20cm2)
+solar_panel_active_area_m2 = 0.002 # 0.002 has been standard for testing (20cm2)
 solar_panel_efficiency = 0.15 #as percentage 0.15
 power_conditioning_efficiency = 1
 temperature_coefficient = 0.0049
@@ -59,7 +59,7 @@ Stx = 1
 sens_freq = 30
 #sens_freq = 30 # Times measurement and TX is taken in half hour. This is the number that will vary with ENO, with upper and lower bounds
 
-energy_cons_var =[0.9,1.1] # to account for variations between transmittions
+energy_cons_var =[0.99,1.01] # to account for variations between transmittions
 energy_spar_var = [0.75,1.25]  # To account for sensor to sensor variation
 
 # Placeholder for requirements from orchastrator
@@ -69,7 +69,7 @@ energy_spar_var = [0.75,1.25]  # To account for sensor to sensor variation
 # orchastMulti = [2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 5, 5, 30, 30, 30, 30, 30, 30, 30, 5, 5, 5, 5, 5, 5, 5, 15, 15, 15, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 15, 5, 5, 5, 2, 2, 2]
 
 # Battery Capacity
-initial_battery_capacity_mah = 8 # 4mah = For TI Tag, this is 24hours in darkness
+initial_battery_capacity_mah = 4 # 4mah = For TI Tag, this is 24hours in darkness
 coulomb_efficiency = .996 # Ability of storage element to deliver and receive energy (percentage in dec)
 battery_self_discharge = .01 # discharge of battery, percentage in dec of total capacity
 
