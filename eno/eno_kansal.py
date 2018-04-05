@@ -73,7 +73,7 @@ class KansalENO():
             
             # This if takes care of the times when battery is full so we don't report greater than 100% storage
             if new_bat_capacity > cur_bat_capacity:
-                print(new_bat_capacity, ">", cur_bat_capacity)
+                # print(new_bat_capacity, ">", cur_bat_capacity)
                 batterylevel_list.append(cur_bat_capacity)
                 batterylevelflag_list.append(2) 
                 energy_surplus = new_bat_capacity - cur_bat_capacity

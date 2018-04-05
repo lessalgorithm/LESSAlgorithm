@@ -50,30 +50,31 @@ class OrchestratorENO():
 			I_cons_list.append(I_cons)
 
 			new_energy_level = cur_bat_level + ((slot_en_gen - I_cons) / 2)
+
+			print("orchestPlace_List[counter] => ", orchestPlace_List[counter], "I_cons => ", I_cons, "cur_bat_level => ", cur_bat_level, "new_energy_level => ", new_energy_level, "slot_en_gen => ", slot_en_gen)
 			
-			if new_energy_level > cur_bat_level:
-				# print(new_energy_level, ">", cur_bat_level)
-			# if new_energy_level > initial_battery_capacity_mah:  # if there is a surplus energy and battery is full
+			if new_energy_level > initial_battery_capacity_mah:
+				print(new_energy_level, ">", cur_bat_level)			
 				batterylevel_list.append(cur_bat_level)
 				batterylevelflag_list.append(2) 
 				energy_surplus = new_energy_level - cur_bat_level
 				energygensurplus_list.append(energy_surplus)
-				energydeficit_list.append(0)
-				if new_energy_level > initial_battery_capacity_mah:
-					cur_bat_level = initial_battery_capacity_mah
-				else:
-					cur_bat_level = new_energy_level
+				energydeficit_list.append(0)				
+				cur_bat_level = initial_battery_capacity_mah
 				sens_freq_list.append(orchestPlace_List[counter])
 
 			elif new_energy_level < 0:  # This takes care of when battery is empty. Doesn't report negative storage
+				print("new_energy_level < 0")
 				batterylevel_list.append(0)
 				batterylevelflag_list.append(0)
 				energygensurplus_list.append(0)
-				energydeficit_list.append(new_energy_level - cur_bat_level)
+				energydeficit_list.append((slot_en_gen - I_cons) / 2)
+				print("energy deficit =>", (slot_en_gen - I_cons) / 2)
 				cur_bat_level = 0
 				sens_freq_list.append(0)
 
 			else:  # Normal operating for system, to calc new battery level
+				print("normal")
 				batterylevel_list.append(new_energy_level)
 				batterylevelflag_list.append(1)
 				energygensurplus_list.append(0)
@@ -82,6 +83,8 @@ class OrchestratorENO():
 				sens_freq_list.append(orchestPlace_List[counter])
 	
 			counter += 1
+
+
 
 		# for a, b, c in zip(Icons_list[1:], currentgen_list[1:], orchestPlace_List[1:]):
 		# 	x = cur_bat_capacity + ((b - a) / 2)
