@@ -51,7 +51,7 @@ class LESSENO():
                 # print("day_energy_pred", [ '%.1f' % elem for elem in day_energy_pred ])                
             
                 # Sensing frequency considerations
-                I_cons_per_tx = ((((((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * 1))
+                I_cons_per_tx = ((((((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * 1) + Iq)
                                * (random.uniform(energy_cons_var[0], energy_cons_var[1])))
 
                 duty_Nw = []
@@ -66,7 +66,7 @@ class LESSENO():
 
 
                 if "tbatt" in test:
-                    cur_bat_levelp = cur_bat_level
+                    #cur_bat_levelp = cur_bat_level
 
                     # Works out in advance the sustainable OP for the system
                     p1_sens_freq = []
@@ -75,68 +75,106 @@ class LESSENO():
                     for dt,op in zip(duty_Nw,orchastPlace_list):
                         p1_sens_freq.append(min(dt, op))
                         #p1_sens_freq_diff.append(op - dt)
-                        p1_sens_freq_diff.append(min(dt, op) -op)
+                        p1_sens_freq_diff.append(op - min(dt, op))
 
-                    print p1_sens_freq_diff
-                    batt_level = LESSENO.battLevel(self,p1_sens_freq,day_energy_pred,I_cons_per_tx,cur_bat_levelp)
+                    #print p1_sens_freq_diff
+                    batt_level = LESSENO.battLevel(self,p1_sens_freq,day_energy_pred,I_cons_per_tx,cur_bat_level)
                     
-                    cur_bat_levelp = batt_level[-1:]
-                    cur_bat_levelp = cur_bat_levelp[0]
+                    #cur_bat_levelp = batt_level[-1:]
+                    #cur_bat_levelp = cur_bat_levelp[0]
 
                 # Then predicts the battery storages over the data at this rate
                 
                 # Then looks through for timeslots where sens_freq is lower than op. It increments the first timeslot by one and then reassesses if the battery will die. If not it keeps going. 
-                p2_sens_freq = p1_sens_freq
-                loopervar = True
-                while loopervar is True:
-                    loopvar3 = True
-                    indexd = 0 
-                    for diff in p1_sens_freq_diff:
-                        
-                        if diff < 0:
-                            p2_sens_freq[indexd] = p2_sens_freq[indexd] + 1
-                            p1_sens_freq_diff[indexd] = p1_sens_freq_diff[indexd] + 1
-                            #print p2_sens_freq
-                        batt_level = LESSENO.battLevel(self,p2_sens_freq,day_energy_pred,I_cons_per_tx,cur_bat_levelp)
-                        #print batt_level
-                        loopervar2 = True
-                        for level in batt_level:
-                            if level < 2:
-                               # print ("called")
-                                break
-                                loopervar2 = False
-                                loopervar = False
-                                #print ("I've broken the loop")
-                            else:
-                                p1_sens_freq = p2_sens_freq
+                    p2_sens_freq = p1_sens_freq
+                    p2_sens_freq_diff = p1_sens_freq_diff
+                    while True:
+                        indexd = 0 
+                        batt_dead = False
+                        print p2_sens_freq_diff
+                        for diff in p2_sens_freq_diff:
+                            if diff > 0:
+                                print p2_sens_freq
+                                p2_sens_freq[indexd] = p2_sens_freq[indexd] + 1
+                                print p2_sens_freq
+                                p2_sens_freq_diff[indexd] = p2_sens_freq_diff[indexd] + 1
+                                if indexd == (Nw -1):
+                                    indexd = 0
+                                else:
+                                    indexd += 1
 
-
-                        if loopervar2 is False:
-                            loopvar3 = False
+                            batt_level = LESSENO.battLevel(self,p2_sens_freq,day_energy_pred,I_cons_per_tx,cur_bat_level)
+                            for level in batt_level:
+                                if level <= 0:
+                                    batt_dead = True
+                                    p1_sens_freq = p2_sens_freq
+                                    break
+                            if batt_dead is True:
+                                break 
+                        if batt_dead is True:
                             break
-
-                        if indexd == (Nw -1):
-                            indexd = 0
-                        
-                        else:
-                            indexd += 1
-
                         counter = 0
-                        for count in p1_sens_freq_diff:
+                        for count in p2_sens_freq_diff:
                             if count < 0:
                                 counter += 1 
 
                         if counter == 0:
                             p1_sens_freq = p2_sens_freq
-                            loopervar = False
+                            break
                         else: 
                             pass 
+                            counter = 0
 
-                        counter = 0
 
-                        #print (p1_sens_freq_diff)
-                    if loopvar3 is False:
-                        break 
+                # while loopervar is True:
+                #     loopvar3 = True
+                #     indexd = 0 
+                #     for diff in p1_sens_freq_diff:
+                        
+                #         if diff < 0:
+                #             p2_sens_freq[indexd] = p2_sens_freq[indexd] + 1
+                #             p1_sens_freq_diff[indexd] = p1_sens_freq_diff[indexd] + 1
+                #             #print p2_sens_freq
+                #         batt_level = LESSENO.battLevel(self,p2_sens_freq,day_energy_pred,I_cons_per_tx,cur_bat_levelp)
+                #         #print batt_level
+                #         loopervar2 = True
+                #         for level in batt_level:
+                #             if level < 2:
+                #                # print ("called")
+                #                 break
+                #                 loopervar2 = False
+                #                 loopervar = False
+                #                 #print ("I've broken the loop")
+                #             else:
+                #                 p1_sens_freq = p2_sens_freq
+
+
+                #         if loopervar2 is False:
+                #             loopvar3 = False
+                #             break
+
+                #         if indexd == (Nw -1):
+                #             indexd = 0
+                        
+                #         else:
+                #             indexd += 1
+
+                #         counter = 0
+                #         for count in p1_sens_freq_diff:
+                #             if count < 0:
+                #                 counter += 1 
+
+                #         if counter == 0:
+                #             p1_sens_freq = p2_sens_freq
+                #             loopervar = False
+                #         else: 
+                #             pass 
+
+                #         counter = 0
+
+                #         #print (p1_sens_freq_diff)
+                #     if loopvar3 is False:
+                #         break 
                          
 
 
@@ -167,6 +205,7 @@ class LESSENO():
             # if sens_freq_needed > sens_freq_eno:
             #	duty_Nw[loop] = sens_freq_needed
             # So there's 4 version of the algo. 1. max 2. min. 3. max + if statement. 4. min + if statement
+            print ('this is the final version', p1_sens_freq) 
             sens_freq = p1_sens_freq[time_slot] # Placeholder
            
             Icons = ((Iq + ((((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * sens_freq)) * (random.uniform(energy_cons_var[0], energy_cons_var[1])))  # Think about if I'm dividing by 2 before taking from battery is Iq being misquoted
@@ -273,11 +312,12 @@ class LESSENO():
         print(" => Battery level calculated for battery aware model and added to dataframe")
         #output = sum(sanity) / len(sanity)
 
-    def battLevel(self,p1_sens_freq,day_energy_pred,I_cons_per_tx,cur_bat_levelp):
+    def battLevel(self,p1_sens_freq2,day_energy_pred,I_cons_per_tx,cur_bat_levelp):
         p1_cons = []
 
-        for dt in p1_sens_freq:
-          p1_cons.append(dt*I_cons_per_tx)
+        for dt in p1_sens_freq2:
+          Icons = ((Iq + ((((Is * Ss) / 1800) + ((Icomp * Scomp) / 1800) + ((Itx * Stx) / 1800)) * dt)) * (random.uniform(energy_cons_var[0], energy_cons_var[1])))
+          p1_cons.append(Icons)
 
        # print ("what is the p1_cons level =>",p1_cons)
 
