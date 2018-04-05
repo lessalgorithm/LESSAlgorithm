@@ -5,9 +5,9 @@ width = 1;
 figure(1); 
 hold on;
 
-locationDatasets = {'1522937209_TORTotal_solartracking_results.json', 
-                    '1522940374_NYCTotal_solartracking_results.json', 
-                    '1522940427_HTITotal_solartracking_results.json'}
+locationDatasets = {'1522947033_TORTotal_solartracking_results.json', 
+                    '1522947144_NYCTotal_solartracking_results.json', 
+                    '1522947186_HTITotal_solartracking_results.json'}
 
 for location=1:3
     xval=location;    

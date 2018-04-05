@@ -122,7 +122,7 @@ class LESSENO():
 
                         counter = 0
 
-                        print (p1_sens_freq_diff)
+                        # print (p1_sens_freq_diff)
                          
 
 
@@ -280,4 +280,5 @@ class LESSENO():
         return batt_levelf
         
     def setWSN(self, df, surplusE):
-        print("Do surplus tasks")
+        # print("Do surplus tasks")
+        pass

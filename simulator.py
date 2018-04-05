@@ -208,7 +208,7 @@ def calcPerf(df, test, name):
     
     orchastPlace_list = df['Orchastration Requirements'].tolist()
     orchastPlace_by_quarter_year = [orchastPlace_list[i:i+quarter_year_data] 
-            for i in range(0, len(orchastPlace_list), quarter_year_data)]    
+            for i in range(0, len(orchastPlace_list), quarter_year_data)]
     
     # print("orchastPlace_list size =>", len(orchastPlace_list))
     # print("sens_freq_list =>", len(sens_freq_list))    
@@ -224,6 +224,21 @@ def calcPerf(df, test, name):
 
         varience = np.var(sens_freq_by_quarter_year[i])
 
+        orchestrator_fullfilment = []
+        for sense_freq, orch_reqs in zip(sens_freq_by_quarter_year[i], 
+                                         orchastPlace_by_quarter_year[i]):
+            if(sense_freq < orch_reqs):
+                orchest_met_per = (sense_freq / orch_reqs) * 100
+            else:
+                orchest_met_per = 100.0
+
+            orchestrator_fullfilment.append(orchest_met_per)
+
+            if name == 'static':
+                print("sense_freq =>", sense_freq, "orch_reqs =>", orch_reqs, "orchest_met_per =>", orchest_met_per);
+
+        orchestrator_fullfilment_per = (round(sum(orchestrator_fullfilment) / len(orchestrator_fullfilment), 2))
+
         # Time the orchastrator requirements were met - got to think about how this is represented (especically over provisioning)
         orchas = []
         for a, b in zip(sens_freq_by_quarter_year[i], orchastPlace_by_quarter_year[i]):
@@ -233,7 +248,7 @@ def calcPerf(df, test, name):
 
         if storage:
             output_jsons.append({'source': test, 'test': name, 'season': season[i], 'Dt_average': average, 'variance': varience, 'perTimeDead': dead_metric_per,
-                                 'perTimeWasted': waste_metric_per, 'orchas': orchastPlace_list, 'sense_freq': sens_freq_list, 'orchas_diff': orchas})
+                                 'perTimeWasted': waste_metric_per, 'orchFullfilment': orchestrator_fullfilment_per, 'orchas': orchastPlace_list, 'sense_freq': sens_freq_list, 'orchas_diff': orchas})
 
 # Performance here is described as the number of transmissions, time alive, time dead, variance, wasted energy.
 
