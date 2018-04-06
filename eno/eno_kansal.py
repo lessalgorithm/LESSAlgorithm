@@ -10,7 +10,7 @@ class KansalENO():
     """ This function calculates energy consumption if the system only relies on the
     LESS algorithm (without taking into account the MORE aspect)"""
 
-    def enoBaseline(self, df, data):
+    def enoBaseline(self, df, data,initial_battery_capacity_mah):
         # currentgen_list = df['Energy Generation Total'].tolist()
         # This list contains the battery level of the system over the source of the system. Assumes state zero is full battery
         batterylevel_list = [initial_battery_capacity_mah]
