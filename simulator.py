@@ -290,9 +290,9 @@ def graphData(df):
            '=================================================')
 
     # index=df.index.get_values()
-    plt.plot(orchas_graph[0], c='blue', linewidth=1.5, label='Orchestrator')
+    # plt.plot(orchas_graph[0], c='blue', linewidth=1.5, label='Orchestrator')
     #plt.plot(static_graph[0], c='green', linewidth=1.5, label='Static')
-    # plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
+    plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
     # less_graph[0].pop(0)
     # less_graph.append(2)
 
@@ -306,7 +306,7 @@ def graphData(df):
                                    'fontsize': 22})
     plt.grid(True, which='both')
     plt.minorticks_on
-    plt.ylim(ymax=35, ymin=0)
+    plt.ylim(ymax=60, ymin=0)
     plt.xlim(xmax=350, xmin=0)
     plt.show()
     # Add labelling automatically
