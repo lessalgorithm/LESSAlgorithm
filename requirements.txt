@@ -2,7 +2,9 @@
 # EWSN submission. The park is divided in two main areas, i.e., riverside and
 # avenue. The WSN layout is provided in the park_wsn_layout.png file.
 
+#@App1=[9:00pm-4:30am->2, 4:30am-6:00am->10, 6:00am-9:00am->60, 9:00am-4:00pm->10, 4:00pm-9:00pm->60]
 @App1=[9:00pm-4:30am->2, 4:30am-6:00am->5, 6:00am-9:00am->30, 9:00am-4:00pm->5, 4:00pm-9:00pm->30]
+# requirements can be 60 too
 
 @App2=[9:00pm-6:00am->2, 6:00am-9:00am->5, 9:00am-11:00am->15, 11:00am-1:00pm->30, 1:00pm-7:00pm->15, 7:00pm-9:00pm->5]
 
