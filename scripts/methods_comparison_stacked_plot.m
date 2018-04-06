@@ -22,7 +22,7 @@ ylabel('method')
 zlabel('duty cycle (D_t)')
 
 set(axes1,'YTick',[1 2 3],'YTickLabel',...
-    {'static','ENO-baseline','LESS'});
+    {'static','ENO-baseline','LESS'}); 
 
 for j = 1:3
     [rows_duty_cycle,cols_duty_cycle] = size(val(j).sense_freq);

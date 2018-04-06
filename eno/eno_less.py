@@ -9,7 +9,9 @@ class LESSENO():
     """ This function calculates the energy consumption of the whole performance
     of the system where LESS is MORE. """
 
-    def lessWSN(self, df, test,initial_battery_capacity_mah):
+    #def lessWSN(self, df, test,initial_battery_capacity_mah):
+    def lessWSN(self, df, test):
+
         # if debug:
        # print(" => Working out LESS current consumption bits")
         orchastPlace_list = df['Orchastration Requirements'].tolist()
@@ -176,7 +178,7 @@ class LESSENO():
             if x > initial_battery_capacity_mah:  # This if takes care of the times when battery is full so we don't report greater than 100% storage
                 batterylevel_list.append(initial_battery_capacity_mah)
                 #batterylevelflag_list.append(2)
-                batterylevelflag_list.append(1)
+                batterylevelflag_list.append(2)
                 y = ((slot_en_gen) - Icons) / 2
                 #energygensurplus_list.append(y)
                 energydeficit_list.append(0)
@@ -265,7 +267,7 @@ class LESSENO():
         #print batterylevel_list
         df['Battery Level'] = batterylevel_list
         df['Battery Level Flag'] = batterylevelflag_list
-        #df['Energy Surplus List'] = energygensurplus_list
+        df['Energy Surplus List'] = energygensurplus_list
         #df['Energy Deficit List'] = energydeficit_list
         df['Energy Consumption'] = Icons_list
         df['Sense Frequency'] = sens_freq_list

@@ -208,10 +208,21 @@ def calcPerf(df, test, name):
     sens_freq_by_quarter_year = [sens_freq_list[i:i+quarter_year_data] 
             for i in range(0, len(sens_freq_list), quarter_year_data)]
 
+    currentgen_list = df['Energy Generation Total'].tolist()
+    currentgen_list_by_quarter_year = [currentgen_list[i:i+quarter_year_data] 
+            for i in range(0, len(currentgen_list), quarter_year_data)]
+ 
+
     batterylevelflag_list = df['Battery Level Flag'].tolist()
     batterylevelflag_by_quarter_year = [batterylevelflag_list[i:i+quarter_year_data] 
             for i in range(0, len(batterylevelflag_list), quarter_year_data)]
     
+
+    energygensurplus_list = df['Energy Surplus List'].tolist()
+    energygensurplus_by_quarter_year = [energygensurplus_list[i:i+quarter_year_data] 
+            for i in range(0, len(energygensurplus_list), quarter_year_data)]
+
+
     orchastPlace_list = df['Orchastration Requirements'].tolist()
     orchastPlace_by_quarter_year = [orchastPlace_list[i:i+quarter_year_data]
             for i in range(0, len(orchastPlace_list), quarter_year_data)]
@@ -225,8 +236,11 @@ def calcPerf(df, test, name):
         dead_metric = batterylevelflag_by_quarter_year[i].count(0)
         dead_metric_per = (dead_metric / len(batterylevelflag_by_quarter_year[i])*100)
 
-        waste_metric = batterylevelflag_by_quarter_year[i].count(2)
-        waste_metric_per = (waste_metric / len(batterylevelflag_by_quarter_year[i])*100)
+        #waste_metric = batterylevelflag_by_quarter_year[i].count(2)
+        total_gen = round(sum(currentgen_list_by_quarter_year[i]))
+        waste_energy = round(sum(energygensurplus_by_quarter_year[i]))
+        waste_metric_per = waste_energy/total_gen
+        print waste_metric_per
 
         varience = np.var(sens_freq_by_quarter_year[i])
 
@@ -240,8 +254,8 @@ def calcPerf(df, test, name):
 
             orchestrator_fullfilment.append(orchest_met_per)
 
-            if name == 'LESS':
-                print("sense_freq =>", sense_freq, "orch_reqs =>", orch_reqs, "orchest_met_per =>", orchest_met_per);
+           # if name == 'LESS':
+            #    print("sense_freq =>", sense_freq, "orch_reqs =>", orch_reqs, "orchest_met_per =>", orchest_met_per);
 
         orchestrator_fullfilment_per = (round(sum(orchestrator_fullfilment) / len(orchestrator_fullfilment), 2))
 
@@ -252,7 +266,8 @@ def calcPerf(df, test, name):
 
         season = {0: 'jan-march', 1: 'april-jun', 2:'jul-sep', 3:'oct-dec'}
 
-        if storage and name != 'orchas':
+        if storage 
+        # and name != 'orchas':
             output_jsons.append({'source': test, 'test': name, 'season': season[i], 'Dt_average': average, 'variance': varience, 'perTimeDead': dead_metric_per,
                                  'perTimeWasted': waste_metric_per, 'orchFullfilment': orchestrator_fullfilment_per, 'orchas': orchastPlace_list, 'sense_freq': sens_freq_list, 'orchas_diff': orchas})
 
