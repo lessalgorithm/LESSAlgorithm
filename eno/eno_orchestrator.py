@@ -9,7 +9,7 @@ class OrchestratorENO():
 	""" This function calculates the energy consumption of the WSN if only
 	controlled by the MORE algorithm. """
 
-	def orchasWSN(self, df, test):
+	def orchasWSN(self, df, test,initial_battery_capacity_mah):
 		
 		# This list contains the battery level of the system over the source of the system . Assumes state zero is full battery
 		batterylevel_list = [initial_battery_capacity_mah]
@@ -124,4 +124,4 @@ class OrchestratorENO():
 		df['Battery Level Flag'] = batterylevelflag_list
 		df['Sense Frequency'] = sens_freq_list
 		# if debug:
-		print(" => Orchestration Current consumption calculated")
+		#print(" => Orchestration Current consumption calculated")

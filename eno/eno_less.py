@@ -9,9 +9,9 @@ class LESSENO():
     """ This function calculates the energy consumption of the whole performance
     of the system where LESS is MORE. """
 
-    def lessWSN(self, df, test):
+    def lessWSN(self, df, test,initial_battery_capacity_mah):
         # if debug:
-        print(" => Working out LESS current consumption bits")
+       # print(" => Working out LESS current consumption bits")
         orchastPlace_list = df['Orchastration Requirements'].tolist()
   
         # Modify to introduce energy prediction separately
@@ -78,7 +78,7 @@ class LESSENO():
                         p1_sens_freq_diff.append(min(dt, op) -op)
 
                     # print p1_sens_freq_diff
-                    batt_level = LESSENO.battLevel(self,p1_sens_freq,day_energy_pred,I_cons_per_tx,cur_bat_levelp)
+                    batt_level = LESSENO.battLevel(self,p1_sens_freq,day_energy_pred,I_cons_per_tx,cur_bat_levelp,initial_battery_capacity_mah)
                     
                     cur_bat_levelp = batt_level[-1:]
                     cur_bat_levelp = cur_bat_levelp[0]
@@ -97,7 +97,7 @@ class LESSENO():
                             p2_sens_freq[indexd] = p2_sens_freq[indexd] + 1
                             p1_sens_freq_diff[indexd] = p1_sens_freq_diff[indexd] + 1
                             #print p2_sens_freq
-                        batt_level = LESSENO.battLevel(self,p2_sens_freq,day_energy_pred,I_cons_per_tx,cur_bat_levelp)
+                        batt_level = LESSENO.battLevel(self,p2_sens_freq,day_energy_pred,I_cons_per_tx,cur_bat_levelp,initial_battery_capacity_mah)
                         #print batt_level
                         loopervar2 = True
                         for level in batt_level:
@@ -272,10 +272,10 @@ class LESSENO():
         # Find a way to record the window characteristics
 
         # if debug:
-        print(" => Battery level calculated for battery aware model and added to dataframe")
+       # print(" => Battery level calculated for battery aware model and added to dataframe")
         #output = sum(sanity) / len(sanity)
 
-    def battLevel(self,p1_sens_freq,day_energy_pred,I_cons_per_tx,cur_bat_levelp):
+    def battLevel(self,p1_sens_freq,day_energy_pred,I_cons_per_tx,cur_bat_levelp,initial_battery_capacity_mah):
         p1_cons = []
 
         for dt in p1_sens_freq:
