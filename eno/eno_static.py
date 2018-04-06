@@ -4,7 +4,8 @@ from NREL import *
 
 class StaticENO():
 
-	def staticWSN(self, df, test,initial_battery_capacity_mah):
+	#def staticWSN(self, df, test,initial_battery_capacity_mah):
+	def staticWSN(self, df, test):
 		
 		# This list contains the battery level of the system over the source of the system . Assumes state zero is full battery
 		batterylevel_list = [initial_battery_capacity_mah]
