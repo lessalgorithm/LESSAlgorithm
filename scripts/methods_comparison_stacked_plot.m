@@ -1,4 +1,4 @@
-fname = '1523026460_7_days_NYCTotal_solartracking_results.json';
+fname = '1523099745_7_days_NYCTotal_solartracking_results.json';
 fid = fopen(fname);
 raw = fread(fid,inf);
 str = char(raw');
@@ -22,7 +22,7 @@ ylabel('method')
 zlabel('duty cycle (D_t)')
 
 set(axes1,'YTick',[1 2 3],'YTickLabel',...
-    {'static','ENO-baseline','LESS'}); 
+    {'static','ENO-Baseline','LESS'}); 
 
 for j = 1:3
     [rows_duty_cycle,cols_duty_cycle] = size(val(j).sense_freq);
@@ -33,6 +33,6 @@ for j = 1:3
     h{end+1} = plot3(slot_matrix, j*ones(size(slot_matrix)), val(j*4).orchas, 'LineStyle', ':', 'color', 'red', 'LineWidth', 2.5);      
 end
 
-legend([h{1} h{3} h{5} h{6}],{'static', 'ENO-Kansal', 'LESS', 'target'});
+legend([h{1} h{3} h{5} h{6}],{'static', 'ENO-Baseline', 'LESS', 'target'});
 
 view(axes1,[-134.09006752598 66.1729713465918]);

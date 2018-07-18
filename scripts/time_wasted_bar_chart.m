@@ -5,15 +5,15 @@ width = 1;
 figure(1); 
 hold on;
 
-locationDatasets = {'1523020773_TORTotal_solartracking_results.json', 
-                    '1523022661_NYCTotal_solartracking_results.json', 
-                    '1523020801_HTITotal_solartracking_results.json'}
+locationDatasets = {'1523100011_TORTotal_solartracking_results.json', 
+                    '1523099980_NYCTotal_solartracking_results.json', 
+                    '1523100045_HTITotal_solartracking_results.json'}
 
 for location=1:3
     xval=location;    
     
     vector = getPredTimeWastedForLocation(locationDatasets{location});
-    x=linspace(1, 3, size(vector, 1));
+    x=linspace(1, 4, size(vector, 1));
 %     x=linspace(1, 4, size(vector, 1));
     
     h = bar3(x, vector, width, 'grouped')
@@ -32,7 +32,7 @@ for location=1:3
     
     if(location == 3)
 %         legend([h(1) h(2) h(3) h(4)],{'static', 'orchestrator', 'ENO baseline', 'LESS', 'target'});
-        legend([h(1) h(2) h(3) ],{'static', 'ENO baseline', 'LESS'});
+        legend([h(1) h(2) h(3) ],{'static', 'ENO-baseline', 'LESS'});
     end    
 end
                 
@@ -54,7 +54,9 @@ set(axes1,'YTick',[1 2 3 4],'YTickLabel',...
 set(axes1,'XTick',[1 2 3 4],'XTickLabel',...
      {'Toronto','New York','Haiti'});
 
+% view(axes1,[162.30993247402 51.6]);
 view(axes1,[152.30993247402 60.4]);
+% view(axes1,[158.70993247402 57.2]);
 
 function perTimeWasted = getPredTimeWastedForLocation(jsonFile)
     fname = jsonFile; 

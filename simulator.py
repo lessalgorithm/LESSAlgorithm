@@ -194,8 +194,9 @@ placeholder """
 
 
 def calcPerf(df, test, name):
-    # Calculate metrics for how well system performs
-    
+    print("Running ", name);
+    print("------------------------")
+    # Calculate metrics for how well system performs    
     quarter_year_data = len(df['Sense Frequency'].tolist()) // 4
 
     sens_freq_list = df['Sense Frequency'].tolist()
@@ -230,7 +231,8 @@ def calcPerf(df, test, name):
     # print("orchastPlace_list size =>", len(orchastPlace_list))
     # print("sens_freq_list =>", len(sens_freq_list))    
 
-    for i in range(0,4):        
+    for i in range(0,4):   
+        print("(",i,")")     
         average = round(sum(sens_freq_by_quarter_year[i]) / len(sens_freq_by_quarter_year[i]), 2)  # average sensing rate for ENO
 
         dead_metric = batterylevelflag_by_quarter_year[i].count(0)
@@ -239,8 +241,8 @@ def calcPerf(df, test, name):
         #waste_metric = batterylevelflag_by_quarter_year[i].count(2)
         total_gen = round(sum(currentgen_list_by_quarter_year[i]))
         waste_energy = round(sum(energygensurplus_by_quarter_year[i]))
-        waste_metric_per = waste_energy/total_gen
-        print waste_metric_per
+        waste_metric_per = waste_energy/total_gen * 100
+        print(waste_metric_per)
 
         varience = np.var(sens_freq_by_quarter_year[i])
 
@@ -266,8 +268,7 @@ def calcPerf(df, test, name):
 
         season = {0: 'jan-march', 1: 'april-jun', 2:'jul-sep', 3:'oct-dec'}
 
-        if storage 
-        # and name != 'orchas':
+        if storage:        
             output_jsons.append({'source': test, 'test': name, 'season': season[i], 'Dt_average': average, 'variance': varience, 'perTimeDead': dead_metric_per,
                                  'perTimeWasted': waste_metric_per, 'orchFullfilment': orchestrator_fullfilment_per, 'orchas': orchastPlace_list, 'sense_freq': sens_freq_list, 'orchas_diff': orchas})
 
@@ -306,13 +307,13 @@ def graphData(df):
 
     # index=df.index.get_values()
     # plt.plot(orchas_graph[0], c='blue', linewidth=1.5, label='Orchestrator')
-    plt.plot(static_graph[0], c='green', linewidth=1.5, label='Static')
-    plt.plot(eno_graph[0], c='red', linewidth=1.5, label='ENO')
+    # plt.plot(static_graph[0], c='green', linewidth=1.5, label='Static')
+    plt.plot(eno_graph[0], c='red', linewidth=2.5, label='ENO')
     # less_graph[0].pop(0)
     # less_graph.append(2)
 
-    plt.plot(less_graph[0], c='orange', linewidth=1.5, label='LESS')
-    plt.plot(graph[0], '--', linewidth=1.0, c='violet', label='Target')
+    # plt.plot(less_graph[0], c='orange', linewidth=2.5, label='LESS')
+    plt.plot(graph[0], '--', linewidth=2.0, c='blue', label='Target')
     # plt.plot() plot the orchestration requirement as dotted line TD
     legend = plt.legend(loc='upper right', shadow=True)
     plt.xlabel('Time Slot, t', {'color': 'black',
@@ -322,7 +323,7 @@ def graphData(df):
     plt.grid(True, which='both')
     plt.minorticks_on
     plt.ylim(ymax=35, ymin=0)
-    plt.xlim(xmax=700, xmin=0)
+    plt.xlim(xmax=350, xmin=0)
     plt.show()
     # Add labelling automatically
     # Change show graph to save graph
@@ -429,7 +430,7 @@ def main(orch_profile, energy_source):
     # orchest_loop.append(orchastMulti)
     orchest_loop.append(orch_profile)    
     for orchest in orchest_loop:  
-        print("orchest =>", orchest)      
+        # print("orchest =>", orchest)      
         for dataset in dataset_list:
             # print("dataset =>", dataset)
             # loads environmental variables from location and time defined in NREL.py. If not local it downloads them from the NREL database and parses them for use.
@@ -449,11 +450,12 @@ def main(orch_profile, energy_source):
                     energy_source = energy_combination
                 df = energyGenTotal(df, energy_source)
                 
-                eno_static.staticWSN(df, dataset, initial_battery_capacity_mah)
+                eno_static.staticWSN(df, dataset)
                 calcPerf(df, dataset, 'static')
                 if debug:
                     print(" => Calculating the static WSN performance")
-                eno_orchestrator.orchasWSN(df, dataset, initial_battery_capacity_mah)
+                
+                eno_orchestrator.orchasWSN(df, dataset)
                 calcPerf(df, dataset, 'orchas')
                 if debug:
                     print(" => Calculating the centrally controlled WSN performance")
@@ -464,12 +466,13 @@ def main(orch_profile, energy_source):
                 # wcewma_pred_vector = wcewma.compute_wcewma_pred_vector(df)
                 # print("wcewma_pred_vector =>", wcewma_pred_vector)
 
-                eno_kansal.enoBaseline(df, currentgen_list, initial_battery_capacity_mah)
+                eno_kansal.enoBaseline(df, currentgen_list)
                 calcPerf(df, dataset, 'eno')
 
                 if debug:
                     print(" => Calculating the solely ENO controlled WSN performance")
-                eno_less.lessWSN(df, dataset, initial_battery_capacity_mah)
+                
+                eno_less.lessWSN(df, dataset)
                 calcPerf(df, dataset, 'LESS')
                 if debug:
                     print(" => Calculating the LESS=MORE WSN performance")

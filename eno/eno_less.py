@@ -9,7 +9,7 @@ class LESSENO():
     """ This function calculates the energy consumption of the whole performance
     of the system where LESS is MORE. """
 
-    #def lessWSN(self, df, test,initial_battery_capacity_mah):
+    # def lessWSN(self, df, test,initial_battery_capacity_mah):
     def lessWSN(self, df, test):
 
         # if debug:

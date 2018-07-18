@@ -249,9 +249,9 @@ def calcPerf(df, test, name,eh,es):
         orchestrator_fullfilment_per = (round(sum(orchestrator_fullfilment) / len(orchestrator_fullfilment), 2))
         if i == 0:
             print ("for method ",name),
-            print ('eh',eh),
-            print ('es',es),
-        orchestrator_fullfilment_pera.append( orchestrator_fullfilment_per)
+            print ('sol panel',eh * 10000),            
+            print ('bat size',es),
+        orchestrator_fullfilment_pera.append(orchestrator_fullfilment_per)
         # Time the orchastrator requirements were met - got to think about how this is represented (especically over provisioning)
         orchas = []
         for a, b in zip(sens_freq_by_quarter_year[i], orchastPlace_by_quarter_year[i]):
@@ -420,12 +420,34 @@ def main(orch_profile, energy_source):
     # orchest_loop.append(orchastMulti)
     orchest_loop.append(orch_profile)  
 
-    eh = [0.00005,0.0001,0.0005,0.001, 0.002,0.005,0.01,0.1,1] # energy harvester
-    es = [0.1,1,2,5,10,25,50,100,250] # energy storage
+    # eh = [0.00005,0.0001,0.0005,0.001, 0.002,0.005,0.01,0.1,1] # energy harvester
+    # es = [0.1,1,2,5,10,25,50,100,250] # energy storage
+    # less_fulfillment = [30.905, 36.85, 41.205, 44.34, 52.67, 59.3225, 68.8075, 87.2025, 99.31, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]
+
+    eh = [0.00005, 0.00007, 0.00009,
+          0.0001, 0.0002, 0.0003,
+          0.0005, 0.0007, 0.0009,
+          0.001, 0.0014, 0.0018,
+          0.002, 0.003, 0.004,
+          0.005, 0.007, 0.009,
+          0.01, 0.04, 0.07,
+          0.1, 0.4, 0.7,
+          1, 2, 3] # energy harvester
+    
+    es = [0.1, 0.4, 0.7, 
+          1, 1.5, 1.7,
+          2, 3, 4,
+          5, 7, 9,
+          10, 15, 20,
+          25, 35, 45,
+          50, 70, 90,
+          100, 150, 200,
+          250, 300, 350] # energy storage
+
     print ("method,season,eh,es,%timedead")
     for solar_panel_active_area_m2,initial_battery_capacity_mah in zip(eh,es):
         for orchest in orchest_loop:  
-            # print("orchest =>", orchest)      
+            print("orchest =>", orchest)      
             for dataset in dataset_list:
                 # print("dataset =>", dataset)
                 # loads environmental variables from location and time defined in NREL.py. If not local it downloads them from the NREL database and parses them for use.
@@ -444,12 +466,14 @@ def main(orch_profile, energy_source):
                     if not energy_source:
                         energy_source = energy_combination
                     df = energyGenTotal(df, energy_source)
-                    eno_static.staticWSN(df, dataset,initial_battery_capacity_mah)
-                    calcPerf(df, dataset, 'static',solar_panel_active_area_m2,initial_battery_capacity_mah)
+                    
+                    # eno_static.staticWSN(df, dataset,initial_battery_capacity_mah)
+                    # calcPerf(df, dataset, 'static',solar_panel_active_area_m2,initial_battery_capacity_mah)
                     #if debug:
                     #    print(" => Calculating the static WSN performance")
-                    eno_orchestrator.orchasWSN(df, dataset,initial_battery_capacity_mah)
-                    calcPerf(df, dataset, 'orchas',solar_panel_active_area_m2,initial_battery_capacity_mah)
+                    
+                    # eno_orchestrator.orchasWSN(df, dataset,initial_battery_capacity_mah)
+                    # calcPerf(df, dataset, 'orchas',solar_panel_active_area_m2,initial_battery_capacity_mah)
                     #if debug:
                      #   print(" => Calculating the centrally controlled WSN performance")
                     # eno_kansal.enoWSN(df, dataset)
@@ -459,11 +483,12 @@ def main(orch_profile, energy_source):
                     # wcewma_pred_vector = wcewma.compute_wcewma_pred_vector(df)
                     # print("wcewma_pred_vector =>", wcewma_pred_vector)
 
-                    eno_kansal.enoBaseline(df, currentgen_list,initial_battery_capacity_mah)
-                    calcPerf(df, dataset, 'eno',solar_panel_active_area_m2,initial_battery_capacity_mah)
+                    # eno_kansal.enoBaseline(df, currentgen_list,initial_battery_capacity_mah)
+                    # calcPerf(df, dataset, 'eno',solar_panel_active_area_m2,initial_battery_capacity_mah)
 
                     #if debug:
                     #    print(" => Calculating the solely ENO controlled WSN performance")
+                    
                     eno_less.lessWSN(df, dataset,initial_battery_capacity_mah)
                     calcPerf(df, dataset, 'LESS',solar_panel_active_area_m2,initial_battery_capacity_mah)
                     #if debug:
